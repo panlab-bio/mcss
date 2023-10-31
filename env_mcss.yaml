@@ -1,0 +1,17 @@
+name: env_mcss
+channels:
+    - bioconda
+    
+dependencies:
+    - python=3.8.13
+    - pbccs
+    - biopython=1.79
+    - samtools
+    - pbsim3
+    - kraken2
+    - pandas  
+    - requests
+    
+
+    
+    

@@ -1,0 +1,4 @@
+s__Methanosarcina_mazei	GCF_000970205.1_genomic.fna
+s__Sulfolobus_acidocaldarius	GCF_000012285.1_genomic.fna
+s__UBA9973_sp002788475	GCA_002786695.1_ASM278669v1_genomic.fna
+s__UBA9973_sp002788475	GCA_002792785.1_ASM279278v1_genomic.fna
