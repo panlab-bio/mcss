@@ -7,20 +7,20 @@ MCSS: microbial community simulator based on structure
     git https://github.com/panlab-bio/mcss
 ```
 
-2. create python environment
+2.  enter mcss path
+```
+    cd mcss
+```
+3. create python environment
 ```
     conda env create -f env_mcss.yaml
 ```
+    
 4. activate environment
 ```
     conda activate env_mcss / source activate env_mcss
 ```
-    
-5. enter mcss path
-```
-    cd mcss
-```
-6. download strain genome
+5. download strain genome
 ```
     python ./tools/download_strain_genome.py 
 ```
