@@ -875,7 +875,7 @@ case "$command" in
             echo "error : no input"
             exit 1
         fi
-        echo $flag_f $multi
+        # echo $flag_f $multi
 
         path_com=$output/community
         echo -e "\033[32minput file\033[0m :$input"
