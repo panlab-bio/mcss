@@ -149,9 +149,14 @@ else:
     # with open(path_abu_save) as f:
     #     pickle.dump(list_abu_all,f)
 path_abu_save = os.path.join(path_sim,"abu",abu_name)#这个时候abu.pkl存的不是分布，而是物种丰度列表的和
-print(path_abu_save)
+# print(path_abu_save)
 with open(path_abu_save,"wb") as f:
     pickle.dump(list_abu_all,f)
+df_list_abu_all = pd.DataFrame(list_abu_all)
+df_list_abu_all.columns=["abu"]
+path_abu_save_df = path_abu_save.replace("pkl","csv")
+df_list_abu_all.to_csv(path_abu_save_df,index=False)
+
 # with open(path_abu_save,"rb") as f:
 #     list_abu_all = pickle.load(f)
 # dist = list_abu_all[0]
@@ -315,9 +320,14 @@ if path_sim.endswith("/"):
 else:
     path_sim_root = path_sim.replace("community","")
 path_save = os.path.join(path_sim_root,"species","sp_list.pkl")
-print(path_save)
+# print(path_save)
 with open(path_save,"wb") as f:
     pickle.dump(name_sp_list,f)
+    
+df_name_sp_list = pd.DataFrame(name_sp_list)
+df_name_sp_list.columns=["species"]
+path_save_df = path_save.replace("pkl","csv")
+df_name_sp_list.to_csv(path_save_df,index=False)
     
 
 
