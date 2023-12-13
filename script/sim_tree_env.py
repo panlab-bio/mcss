@@ -148,7 +148,7 @@ path_save = os.path.join(path_sim,"species","sp_list.pkl")
 
 with open(path_save,"wb") as f:
     pickle.dump(name_sp_list,f)
-df_name_sp_list = pd.DataFrame(name_sp_list)
-df_name_sp_list.columns=["species"]
+# print("name_sp_list",name_sp_list)
+df_name_sp_list = pd.DataFrame({'species': name_sp_list})
 path_save_df = path_save.replace("pkl","csv")
 df_name_sp_list.to_csv(path_save_df,index=False)
