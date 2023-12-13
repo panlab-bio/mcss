@@ -181,4 +181,3 @@ print(len(df_sp_all_merge))
 df_sp_all_merge.to_csv(path_sp_path,header=None,sep="\t",index=None)
 
 
-
