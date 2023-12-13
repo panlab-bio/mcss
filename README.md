@@ -4,7 +4,7 @@ MCSS: microbial community simulator based on structure
 
 1. clone repository
 ```
-    git https://github.com/panlab-bio/mcss
+    git clone https://github.com/panlab-bio/mcss
 ```
 
 2.  enter mcss path
