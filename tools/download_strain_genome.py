@@ -85,7 +85,7 @@ path_genome = "./gtdb_genomes_reps_r207"
 
 path_strain_genome = os.path.join(path_mcss,"data/strain_genome")
 os.makedirs(path_strain_genome,exist_ok=True)
-path_genome = "/data/huixingqi/sim_meta/data/ncbi_genome/gtdb_genomes_reps_r207/"
+# path_genome = "/data/huixingqi/sim_meta/data/ncbi_genome/gtdb_genomes_reps_r207/"
 path_acns_gt = os.path.join(path_mcss,"data/gtdb_taxonomy_acns.tsv")
 df_acns_gt = pd.read_csv(path_acns_gt,header=None,sep="\t")
 df_acns_gt.columns=["acns","tax"]
@@ -122,7 +122,7 @@ list_path = df_strain_path["path"].to_list()
 
 # for lp in list_path[:2]:
 for lp in list_path:
-    print(lp)
+    # print(lp)
     response = requests.get(lp)
     if response.status_code == 200:
         file_name = os.path.join(path_strain_genome_dl, os.path.basename(lp))
@@ -179,5 +179,6 @@ df_sp_all_merge = pd.merge(df_list_gt_dl,df_list_all,on=["path"])
 df_sp_all_merge["path"] = df_sp_all_merge["path"].apply(lambda x:x+"_genomic.fna")
 print(len(df_sp_all_merge))
 df_sp_all_merge.to_csv(path_sp_path,header=None,sep="\t",index=None)
+
 
 
