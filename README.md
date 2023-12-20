@@ -20,10 +20,7 @@ MCSS: microbial community simulator based on structure
 ```
     conda activate env_mcss / source activate env_mcss
 ```
-5. download strain genome
-```
-    python ./tools/download_strain_genome.py 
-```
+
 ## usage
 
 1. simulate based on environment
@@ -39,16 +36,7 @@ MCSS: microbial community simulator based on structure
 ```
    
    
-2. simulate based on fastq reads
-```
-./mcss.sh sample -i kraken_fastq/kraken_oral/ -o sim_sample_paired p 
-   
-       #  paired fastq reads
-./mcss.sh sample -i kraken_fastq/kraken_rhi/ -o sim_sample_single
-   
-       #  single fastq reads
-```
-3. simulate based on GTDB species (User-specified )
+4. simulate based on GTDB species (User-specified )
 ```
 ./mcss.sh community -f example/example_sp/sp_ex_1.txt -a example/example_abu/abu_ex_1.txt -o sim_com_f 
    
@@ -64,6 +52,17 @@ MCSS: microbial community simulator based on structure
        #  dir with fastq files
        #  gut environment abundance
 ```
+
+3. simulate based on fastq reads
+```
+./mcss.sh sample -i kraken_fastq/kraken_oral/ -o sim_sample_paired p 
+   
+       #  paired fastq reads
+./mcss.sh sample -i kraken_fastq/kraken_rhi/ -o sim_sample_single
+   
+       #  single fastq reads
+```
+
 4. call pbsim3 ( simulate community and call pbsim3 can be done separately )
 ```
 ./mcss.sh pbsim -i sim_com_g/
