@@ -46,10 +46,10 @@ case "$command" in
                     n_samples="$2"
                     shift 2
                     ;;
-                sl|st_len)
-                    flag_sl=1
-                    shift 
-                    ;;
+                # sl|st_len)
+                #     flag_sl=1
+                #     shift 
+                #     ;;
                 acc|accurate)
                     if [ "$flag_acc_v" = true ]; then
                         echo "these two options (acc, prol) are in conflict"
@@ -73,6 +73,7 @@ case "$command" in
                     shift 2
                     ;;
                 "pbsim")
+                    flag_genome=1
                     flag_pbsim=true
                     cnt_strain=1
                     depth=$cnt_strain
@@ -107,6 +108,14 @@ case "$command" in
                     
                     shift 2
                     ;;
+                g|genome)
+                    if [ "$flag_pbsim" = false ]; then
+                        echo "only meaningful with pbsim"
+                        exit 1
+                    fi
+                    flag_genome=0
+                    shift 2
+                    ;;
                 --min_depth)
                     if [ "$flag_pbsim" = false ]; then
                         echo "only meaningful with pbsim"
@@ -119,7 +128,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=0
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
                 --mean_depth)
@@ -133,7 +142,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=1
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
 
@@ -168,15 +177,15 @@ case "$command" in
                     echo "-e,--env: choice an environment. gut,oral,skin,marine,soil,rhizosphere"
                     echo "-o,--output: output dir " 
                     echo "-n,--n_samples: count of simulate samples. default:1 "
-                    echo "sl,st_len: exclude significant species count bias"
+                    # echo "sl,st_len: exclude significant species count bias"
                     echo "acc,accurate: accurate mode to seek out the subtree"
                     echo "prol,prolific: prolific mode to seek out the subtree "
-                    echo "Choose one between acc and prol, with acc as the default value"
+                    echo "Choose one between acc and prol, with prol as the default value in env mode"
                     
                     echo "pbsim：execute  pbsim3"
                     echo "options for pbsim:"
                     echo "-s,--strain：number of strain"
-                    echo "--min_depth,--mean_depth：min or average depth of species"
+                    echo "--min_depth,--mean_depth：min or average depth of species, min "
                     echo "--method: qshmm, errhmm. default:qshmm"
                     echo "--model QSHMM-ONT.model, QSHMM-RSII.model, ERRHMM-ONT.model, ERRHMM-RSII.model, ERRHMM-SEQUEL.model. default:QSHMM-RSII.model"
                     echo "--pass-num: if number of passes(pass-num)>1,multi-pass sequencing is performed to get hifi reads. default:10"
@@ -198,6 +207,10 @@ case "$command" in
             echo "error : choice an env"
             exit 1
         fi
+        if [ "$flag_depth" = true ]; then
+                $depth=$depth_pb
+        fi
+        
         if [ ! -d $output/community/abu ]; then
             mkdir -p $output/community/abu
         fi
@@ -228,11 +241,14 @@ case "$command" in
                 echo "no model named $model"
                 exit 1
             fi
+            if [ ! -d $output/pbsim ]; then
+                mkdir -p $output/pbsim
+            fi
             #这里有两种思路，一组就是直接调用mcss pbsim 
             #一种就是python 
             #pyhon需要把pbsim的东西全都复刻
             #mcss需要判断输入了哪些
-            python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num
+            python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
             #这个的第二个参数和pbsim单独选项里的参数不一样，因为那个直接输入的input就是sim文件，我们的输出才是
         fi
 
@@ -329,6 +345,8 @@ case "$command" in
         flag_acc=1
         flag_acc_v=false   
         abu_sp="0.001"
+        suf_pre="_1"
+        suf="fastq.gz"
         while [[ $# -gt 0 ]]; do
             case "$1" in
             #i必须是绝对路径,实现了将相对路径转换为绝对路径
@@ -344,6 +362,14 @@ case "$command" in
                     ;;
                 -asp|--abu_sp)
                     abu_sp="$2"
+                    shift 2
+                    ;;
+                -suf|--suffix)
+                    suf_pre="$2"
+                    shift 2
+                    ;;
+                -suf_pair)
+                    suf="$2"
                     shift 2
                     ;;
                 acc|accurate)
@@ -393,6 +419,7 @@ case "$command" in
                     shift
                     ;;
                 "pbsim")
+                    flag_genome=1
                     flag_pbsim=true
                     cnt_strain=1
                     depth=$cnt_strain
@@ -426,6 +453,14 @@ case "$command" in
                     
                     shift 2
                     ;;
+                g|genome)
+                    if [ "$flag_pbsim" = false ]; then
+                        echo "only meaningful with pbsim"
+                        exit 1
+                    fi
+                    flag_genome=0
+                    shift 2
+                    ;;
                 --min_depth)
                     if [ "$flag_pbsim" = false ]; then
                         echo "only meaningful with pbsim"
@@ -438,7 +473,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=0
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
                 --mean_depth)
@@ -452,7 +487,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=1
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
 
@@ -493,7 +528,7 @@ case "$command" in
                     echo "ml,multi_sample: more than one samples from the same env"
                     echo "acc,accurate: accurate mode to seek out the subtree"
                     echo "prol,prolific: prolific mode to seek out the subtree "
-                    echo "Choose one between acc and prol, with acc as the default value"
+                    echo "Choose one between acc and prol, with acc as the default value in sample mode"
                     
                     echo "pbsim：execute  pbsim3"
                     echo "options for pbsim:"
@@ -532,6 +567,10 @@ case "$command" in
         echo -e "\033[32moutput file\033[0m :$output"
         echo $path_db
         
+        if [ "$flag_depth" = true ]; then
+                $depth=$depth_pb
+        fi
+        
         if [ ! -d $path_db ]; then
             cleanup() {
                 echo "deleting the unfinished database..."
@@ -569,7 +608,7 @@ case "$command" in
         start_l=0 
         for ((i=0;i<parts_len;i++)); do
             # echo ${parts[i]}
-            cmd_tmp="python $path_script/get_sample_sp.py $input $path_com $mode $dir_kraken $path_map_db $start_l ${parts[i]} "
+            cmd_tmp="python $path_script/get_sample_sp.py $input $path_com $mode $dir_kraken $path_map_db $start_l ${parts[i]} $suf $suf_pre"
             #需要给cmd加一个括号，不然不行
             # arry_1+=("$cmd_tmp")
             arry_1=("${arry_1[@]}" "$cmd_tmp")
@@ -655,16 +694,19 @@ case "$command" in
             path_abu_new=$output/community/abu/$abu_name
             echo $path_abu_new
             model_new=$current_dir/data/pbsim_model/$model
-            
+       
             if [ ! -f $model_new ]; then
                 echo "no model named $model"
                 exit 1
+            fi
+            if [ ! -d $output/pbsim ]; then
+                mkdir -p $output/pbsim
             fi
             #这里有两种思路，一组就是直接调用mcss pbsim 
             #一种就是python 
             #pyhon需要把pbsim的东西全都复刻
             #mcss需要判断输入了哪些
-            python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num
+            python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
             #这个的第二个参数和pbsim单独选项里的参数不一样，因为那个直接输入的input就是sim文件，我们的输出才是
         fi
         ;;
@@ -719,6 +761,7 @@ case "$command" in
                     shift 2
                     ;;
                 "pbsim")
+                    flag_genome=1
                     flag_pbsim=true
                     cnt_strain=1
                     depth=$cnt_strain
@@ -752,6 +795,14 @@ case "$command" in
                     
                     shift 2
                     ;;
+                g|genome)
+                    if [ "$flag_pbsim" = false ]; then
+                        echo "only meaningful with pbsim"
+                        exit 1
+                    fi
+                    flag_genome=0
+                    shift 2
+                    ;;
                 --min_depth)
                     if [ "$flag_pbsim" = false ]; then
                         echo "only meaningful with pbsim"
@@ -764,7 +815,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=0
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
                 --mean_depth)
@@ -778,7 +829,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=1
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
 
@@ -875,6 +926,10 @@ case "$command" in
             echo "error : no input"
             exit 1
         fi
+        
+        if [ "$flag_depth" = true ]; then
+                $depth=$depth_pb
+        fi
         # echo $flag_f $multi
 
         path_com=$output/community
@@ -905,11 +960,14 @@ case "$command" in
                 echo "no model named $model"
                 exit 1
             fi
+            if [ ! -d $output/pbsim ]; then
+                mkdir -p $output/pbsim
+            fi
             #这里有两种思路，一组就是直接调用mcss pbsim 
             #一种就是python 
             #pyhon需要把pbsim的东西全都复刻
             #mcss需要判断输入了哪些
-            python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode  $method $model_new $pass_num
+            python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode  $method $model_new $pass_num $flag_genome
             #这个的第二个参数和pbsim单独选项里的参数不一样，因为那个直接输入的input就是sim文件，我们的输出才是
         fi
         
@@ -918,6 +976,7 @@ case "$command" in
         ;;
 ############################################################################################# pbsim   
     "pbsim")
+        flag_genome=1
         cnt_strain=1
         depth=$cnt_strain
         type_depth=0
@@ -954,6 +1013,14 @@ case "$command" in
                     depth=$cnt_strain
                     shift 2
                     ;;
+                g|genome)
+                    if [ "$flag_pbsim" = false ]; then
+                        echo "only meaningful with pbsim"
+                        exit 1
+                    fi
+                    flag_genome=0
+                    shift 2
+                    ;;
                 --min_depth)
                     if [ "$flag_depth" = true ]; then
                         echo "these two options (--min_depth, --mean_depth) are in conflict"
@@ -961,7 +1028,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=0
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
                 --mean_depth)
@@ -971,7 +1038,7 @@ case "$command" in
                     fi
                     flag_depth=true
                     type_depth=1
-                    depth="$2"
+                    depth_pb="$2"
                     shift 2
                     ;;
                 # -d|--depth)
@@ -1012,6 +1079,9 @@ case "$command" in
             echo "error : no input"
             exit 1
         fi
+        if [ "$flag_depth" = true ]; then
+                $depth=$depth_pb
+        fi
         abu_name=$(ls $input/community/abu/)
         if [ "$abu_name" = "abu_env.pkl" ]; then
             sim_mode=0
@@ -1027,11 +1097,14 @@ case "$command" in
             echo "no model named $model"
             exit 1
         fi
+        if [ ! -d $output/pbsim ]; then
+            mkdir -p $output/pbsim
+        fi
         # echo $type_depth
         # if [ ! -d $input/sim_concat ]; then
         #     mkdir $input/sim_concat 
         # fi
-        python $path_script/get_strain.py $current_dir $input $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num
+        python $path_script/get_strain.py $current_dir $input $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
         ;;
     "-h")
         echo "mcss.sh env: Environment-specific simulated data generation "
