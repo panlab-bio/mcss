@@ -152,10 +152,14 @@ path_abu_save = os.path.join(path_sim,"abu",abu_name)#这个时候abu.pkl存的�
 # print(path_abu_save)
 with open(path_abu_save,"wb") as f:
     pickle.dump(list_abu_all,f)
-df_list_abu_all = pd.DataFrame(list_abu_all)
-df_list_abu_all.columns=["abu"]
-path_abu_save_df = path_abu_save.replace("pkl","csv")
-df_list_abu_all.to_csv(path_abu_save_df,index=False)
+
+for nsl_i,nsl in enumerate(list_abu_all):
+    path_abu_save_df = path_abu_save.replace(".pkl","_"+str(nsl_i)+".csv") 
+# print("name_sp_list",name_sp_list)
+    df_list_abu_all = pd.DataFrame(nsl_i)
+    df_list_abu_all.columns=["abu"]
+    df_list_abu_all.to_csv(path_abu_save_df,index=False)
+    
 
 # with open(path_abu_save,"rb") as f:
 #     list_abu_all = pickle.load(f)
@@ -324,10 +328,12 @@ path_save = os.path.join(path_sim_root,"species","sp_list.pkl")
 with open(path_save,"wb") as f:
     pickle.dump(name_sp_list,f)
     
-df_name_sp_list = pd.DataFrame(name_sp_list)
-df_name_sp_list.columns=["species"]
-path_save_df = path_save.replace("pkl","csv")
-df_name_sp_list.to_csv(path_save_df,index=False)
+for nsl_i,nsl in enumerate(name_sp_list):
+    path_save_df = path_save.replace(".pkl","_"+str(nsl_i)+".csv") 
+# print("name_sp_list",name_sp_list)
+    df_name_sp_list = pd.DataFrame(nsl)
+    df_name_sp_list.columns=["species"]
+    df_name_sp_list.to_csv(path_save_df,index=False)
     
 
 
