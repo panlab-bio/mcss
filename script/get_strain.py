@@ -26,6 +26,7 @@ method = sys.argv[8]
 # model = "/data/huixingqi/software/1_tools/pbsim3/data/QSHMM-RSII.model"
 model =  sys.argv[9]
 pass_sum = sys.argv[10]
+genome_strain = int(sys.argv[11]) # 0 or 1,0是早就存好了，1是现下
 
 #sim_mode不是按照env,sample,community来区分
 #0代表输入的abu是一个列表，在里面采样
@@ -69,8 +70,8 @@ def sim_read_pbsim3(genome,depth,method,model,sim_out,path_abs,sample_n=1,l_min=
         cnt_sim+=1
         cmd_pbsim = cmd_pbsim_head+ " "+str(my_d)+" "+my_g+" "+my_pre+" "+pass_sum+" "+str(sample_n)
         path_shell=os.path.join(path_abs,"script")
-        print(path_shell)
-        print(cmd_pbsim)
+        # print(path_shell)
+        # print(cmd_pbsim)
         subprocess.run(cmd_pbsim,shell=True,cwd=path_shell)
         # try:
         #     result = subprocess.run(cmd_pbsim, shell=True, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,cwd="./")
@@ -78,10 +79,16 @@ def sim_read_pbsim3(genome,depth,method,model,sim_out,path_abs,sample_n=1,l_min=
         # except subprocess.CalledProcessError as e:
         #     print("Error:", e)
         #     print("Output:", e.stdout)
-
-path_sp = os.path.join(path_abs,"data/sp_path.txt")
-df_path_sp = pd.read_csv(path_sp,header=None,sep="\t")
-df_path_sp.columns=["sp","path"]
+if genome_strain == 0:
+    path_sp = os.path.join(path_abs,"data/sp_path.txt")
+    df_path_sp = pd.read_csv(path_sp,header=None,sep="\t")
+    df_path_sp.columns=["sp","path"]
+else:
+    path_down = os.path.join(path_abs,"data/strain_file/down_strain.csv")
+    df_down = pd.read_csv(path_down,header=None,sep="\t")
+    df_down.columns = ["sp","acns","path","genome"]
+    df_path_sp = df_down[["sp","genome"]]
+    df_path_sp.columns=["sp","path"]
 # print(df_path_sp["sp"].nunique())
 
 path_sp_sim = os.path.join(path_sim,"species/sp_list.pkl")
@@ -91,9 +98,21 @@ print(sim_out)
 
 with open(path_sp_sim,"rb") as f:
     name_sp_list = pickle.load(f)
-
+# print(name_sp_list)
 #存放基因组的列表
-path_strain_genome = os.path.join(path_abs,"data/strain_genome/")
+
+
+if genome_strain == 0:
+    path_strain_genome = os.path.join(path_abs,"data/strain_genome/")
+else:
+    path_strain_genome = os.path.join(path_abs,"data/strain_download_t/")
+    
+
+    
+    
+    
+    
+    
 # if sim_mode!=2:
 with open(path_abu,"rb") as f:
     abu_real = pickle.load(f)
@@ -103,7 +122,7 @@ with open(path_abu,"rb") as f:
 #     abu_sample_sim = abu_real["abu"].to_list()
 for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个样本
     sp_a_sample = name_sp_sample[:]
-    print(sp_a_sample)
+    # print(sp_a_sample)
     df_sp_sample = pd.DataFrame(sp_a_sample,columns=["sp"])
     merge_sp_path = pd.merge(df_sp_sample,df_path_sp,on=["sp"])
     
@@ -113,8 +132,10 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
         # print(sp)
         path_this_sp = merge_sp_path[merge_sp_path["sp"]==sp]["path"].to_list()
         cnt_chioce = min(cnt_strain,len(path_this_sp)) #选的strain个数不能超过这个物种的strain的个数的最大值
+        # print("cnt_chioce",cnt_chioce)
         list_cnt_choice.append(cnt_chioce)
         strian_choice = random.sample(path_this_sp,cnt_chioce)
+        # down_strains(strian_choice)
         strian_choice_new = [os.path.join(path_strain_genome,sc) for sc in strian_choice]
         list_strain_choice += strian_choice_new #这个列表里面存的是选好的基因组
     # list_strain_choice是选好的基因组
@@ -174,12 +195,28 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
         # sum_abu = sum(abu_sample_sim_new)
         
     #上面执行完，就得到了这个样本的丰度
+    print("abu_sample_sim",abu_sample_sim)
+    if genome_strain == 1:
+        path_tmp_strain = os.path.join(sim_out,"sample_strain_path_"+str(n_index)+".txt")
+        # print(path_tmp_strain)
+        df_tmp_strain = pd.DataFrame(list_strain_choice)
+        df_tmp_strain.columns = ["acns"]
+        df_tmp_strain["acns"] = df_tmp_strain["acns"].apply(lambda x:x.split("/")[-1].split("_")[0]+"_"+x.split("/")[-1].split("_")[1])
+        df_tmp_strain.to_csv(path_tmp_strain,header=None,sep="\t",index=False)
+        path_down = os.path.join(path_abs,"script/down_strains.py")
+        cmd_down = "python "+path_down+" "+ path_tmp_strain+" "+path_abs
+        # print(cmd_down)
+        print("start to download strain genomes")
+        subprocess.run(cmd_down,shell=True,cwd="./")
+        
     if flag_min_depth:#最小depth
         print("min depth")
         min_abu_sample = min(abu_sample_sim)
         
         depth_sample = [float("{:.2f}".format(min_depth*(mas/min_abu_sample))) for mas in abu_sample_sim ]
         depth_list_strain = get_strain_abu(depth_sample,list_strain_choice,list_cnt_choice)
+        # print(depth_list_strain)
+        print(depth_sample,list_strain_choice,list_cnt_choice)
         print(len(depth_list_strain),depth_list_strain)
         # print(len(list_strain_choice),list_strain_choice)
         sim_read_pbsim3(list_strain_choice,depth_list_strain,method,model,sim_out,path_abs,n_index+1)
@@ -191,14 +228,5 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
         sim_read_pbsim3(list_strain_choice,depth_list_strain,method,model,sim_out,path_abs,n_index+1)
     
     
-
-
-# list_strain_new = []
-# for strain in list_strain_choice:
-#     strain_name = strain.split("/")[-1].replace(".gz","")
-#     # print(strain_name)
-#     path_strain_name = os.path.join(path_strain_genome,strain_name)#某个具体的基因组
-#     list_strain_new+=[path_strain_name]
-        
 
 
