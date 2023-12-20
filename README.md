@@ -36,7 +36,7 @@ MCSS: microbial community simulator based on structure
 ```
    
    
-4. simulate based on GTDB species (User-specified )
+2. simulate based on GTDB species (User-specified )
 ```
 ./mcss.sh community -f example/example_sp/sp_ex_1.txt -a example/example_abu/abu_ex_1.txt -o sim_com_f 
    
