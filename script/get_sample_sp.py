@@ -20,16 +20,20 @@ dir_kraken = sys.argv[4]
 path_db = sys.argv[5]
 start = int(sys.argv[6])
 end = int(sys.argv[7])
+suf = sys.argv[8]
+suf_pre = sys.argv[9]
+
 # path_db = "/dev/shm/db/"
 # in_file = os.path.join("/data/huixingqi/data/env",env)
 
 
-def get_report_1(in_file,out_file,path_db=path_db):
+def get_report_1(in_file,out_file,path_db,start,end,suffix=".fastq.gz"):
     #单端
     # path_db = "/dev/shm/db/"
-    list_srr = sorted(os.listdir(in_file))
+    list_srr = sorted(os.listdir(in_file))[start:end]
     for f in list_srr:
-        srr = f.split(".")[0]
+        # srr = f.split(".")[0]
+        srr = f.replace(suffix,"")
         res=os.path.join(out_file,srr+".out")
         report=os.path.join(out_file,srr+"_rep.txt")
         path_f = os.path.join(in_file,f)
@@ -41,22 +45,23 @@ def get_report_1(in_file,out_file,path_db=path_db):
 
 
 
-def get_report_2(in_file,out_file,path_db=path_db):
+def get_report_2(in_file,out_file,path_db,start,end,suffix1="_1",suffix=".fastq.gz"):
 
     list_srr_all = sorted(os.listdir(in_file))
     #双端的问题是有两个srr，_1和_2，所以要获得根name
-    list_srr = [srr.replace("_1.fastq.gz","") for srr in list_srr_all if "_1" in srr]
-    suffix = list_srr_all[0].split("_")[-1][1:]
+    list_srr = [srr.replace(suffix1+suffix,"") for srr in list_srr_all if suffix1 in srr]
+    # suffix = list_srr_all[0].split("_")[-1][1:]
     # print(suffix)
     # print(list_srr)
-    for f in list_srr:#batch
+    for f in list_srr[start:end]:#batch
         # srr = f.split("_")[0]
-        srr = f.split(".")[0]
+        # srr = f.split(".")[0]
+        srr = f.replace(suffix,"")
         # print(srr)
         res=os.path.join(out_file,srr+".out")
         report=os.path.join(out_file,srr+"_rep.txt")
-        f1 = f+"_1"+suffix
-        f2 = f+"_2"+suffix
+        f1 = f+suffix1+suffix
+        f2 = f+suffix1+suffix
         path_f1 = os.path.join(in_file,f1)
         path_f2 = os.path.join(in_file,f2)
         # print(path_f1,path_f2)
@@ -82,16 +87,22 @@ out_file = os.path.join(out_file_root,"kraken_res")
 # print(out_file)
     
 if mode==1:
-     get_report_1(in_file,out_file)
+    suffix = "."+suf
+    get_report_1(in_file,out_file,path_db,start,end,suffix)
 else:
-     get_report_2(in_file,out_file)
+    suffix = "."+suf
+    get_report_2(in_file,out_file,path_db,start,end,suf_pre,suffix)
 
 if mode == 1:
     srr_batch = sorted(os.listdir(in_file))[start:end]
-    srr_batch_new = [srr.split(".")[0] for srr in srr_batch]
+    # srr_batch_new = [srr.split(".")[0] for srr in srr_batch]
+    srr_batch_new = [srr.replace(suffix,"") for srr in srr_batch]
+    
 else:
     list_srr_all = sorted(os.listdir(in_file))
-    srr_batch = [srr.split(".")[0].replace("_1","") for srr in list_srr_all if "_1" in srr]
+    # srr_batch = [srr.split(".")[0].replace("_1","") for srr in list_srr_all if "_1" in srr]
+    srr_batch = [srr.replace(suffix1+suffix,"") for srr in list_srr_all if suffix1 in srr]
+    
     srr_batch_new = srr_batch[start:end]
 
 df_batch = pd.DataFrame(srr_batch_new)
