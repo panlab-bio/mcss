@@ -37,7 +37,7 @@ conda activate env_mcss / source activate env_mcss
 1. simulate based on environment
 
 ```
-./mcss.sh env -e gut -o sim_env pbsim 
+./mcss.sh env -e gut -o sim_env 
    
        # -e choice environment 
    
