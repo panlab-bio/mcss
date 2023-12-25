@@ -31,6 +31,11 @@ conda install scipy
 ```
 conda activate env_mcss / source activate env_mcss
 ```
+5. download strain genomes
+```
+tar xvzf data/strain_file/down_strain.tar.gz
+
+```
 
 ## usage
 
@@ -79,9 +84,11 @@ conda activate env_mcss / source activate env_mcss
 ./mcss.sh pbsim -i sim_com_g/
    
        #  call pbsim3 to generate reads of communities in sim_com_g
+
        
    
 ```
+
 5. help doc
 ```
 ./mcss.sh -h
