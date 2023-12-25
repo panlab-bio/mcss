@@ -34,7 +34,7 @@ conda activate env_mcss / source activate env_mcss
 5. download strain genomes
 ```
 tar xvzf data/strain_file/down_strain.tar.gz
-
+tar xvzf data/data/strain_download.tar.gz
 ```
 
 ## usage
