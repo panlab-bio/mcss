@@ -18,7 +18,7 @@ or:
 conda create -n env_mcss python=3.8.13
 source activate env_mcss
 conda install -c bioconda pbccs
-conda install -c bioconda biopython=1.79
+conda install biopython
 conda install -c bioconda samtools
 conda install -c bioconda kraken2
 conda install -c bioconda pbsim3
