@@ -208,7 +208,7 @@ case "$command" in
             exit 1
         fi
         if [ "$flag_depth" = true ]; then
-                $depth=$depth_pb
+                depth=$depth_pb
         fi
         
         if [ ! -d $output/community/abu ]; then
@@ -568,7 +568,7 @@ case "$command" in
         echo $path_db
         
         if [ "$flag_depth" = true ]; then
-                $depth=$depth_pb
+                depth=$depth_pb
         fi
         
         if [ ! -d $path_db ]; then
@@ -928,8 +928,9 @@ case "$command" in
         fi
         
         if [ "$flag_depth" = true ]; then
-                $depth=$depth_pb
+                depth=$depth_pb
         fi
+        # echo " my mean depth"$depth $depth_pb
         # echo $flag_f $multi
 
         path_com=$output/community
@@ -1081,7 +1082,7 @@ case "$command" in
             exit 1
         fi
         if [ "$flag_depth" = true ]; then
-                $depth=$depth_pb
+                depth=$depth_pb
         fi
         abu_name=$(ls $input/community/abu/)
         if [ "$abu_name" = "abu_env.pkl" ]; then
