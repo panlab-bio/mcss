@@ -16,7 +16,7 @@ from scipy.stats import lognorm
 path_abs = sys.argv[1]
 path_sim = sys.argv[2]#这个的输入是真的sim，不是community，之前的因为牵连太多，就用community了
 cnt_strain = int(sys.argv[3])
-depth = int(sys.argv[4])
+depth = float(sys.argv[4])
 type_depth = int(sys.argv[5])
 path_abu = sys.argv[6] #丰度分布文件
 sim_mode = int(sys.argv[7])
@@ -36,6 +36,7 @@ genome_strain = int(sys.argv[11]) # 0 or 1,0是早就存好了，1是现下
 # print("pbsim-----------",path_pbsim)
 #type_depth为0的时候，认为输入的是最小depth
 #否则认为输入的是平均depth
+print("depth",depth)
 if type_depth==0:
     print("min")
     flag_min_depth = True
@@ -223,6 +224,7 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
     else:
         print("mean depth")
         sum_depth = len_sp * mean_depth
+        print(sum_depth,abu_sample_sim)
         depth_sample = [float("{:.2f}".format(sum_depth*mas)) for mas in abu_sample_sim ]
         depth_list_strain = get_strain_abu(depth_sample,list_strain_choice,list_cnt_choice)
         sim_read_pbsim3(list_strain_choice,depth_list_strain,method,model,sim_out,path_abs,n_index+1)
