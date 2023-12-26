@@ -80,7 +80,7 @@ bash strain_download.sh
 
 4. call pbsim3 ( simulate community and call pbsim3 can be done separately )
 ```
-./mcss.sh pbsim -i sim_com_f/ 
+./mcss.sh pbsim -i sim_com_f/ --mean_depth 5
    
        #  call pbsim3 to generate reads of communities in sim_com_f
 
