@@ -1,12 +1,12 @@
 name: env_mcss
 channels:
     - bioconda
-    
+    - conda-forge
 dependencies:
     - python=3.8.13
     - pbccs
     - biopython=1.79
-    - samtools
+    - samtools=0.1
     - pbsim3
     - kraken2
     - pandas  
