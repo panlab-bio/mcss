@@ -4,14 +4,14 @@ channels:
     - conda-forge
 dependencies:
     - python=3.8.13
-    - pbccs
-    - biopython=1.79
+    - pbccs=6.4.0
+    - biopython=1.78
     - samtools=0.1
-    - pbsim3
-    - kraken2
-    - pandas  
-    - requests
-    - scipy
+    - pbsim3=3.0.1
+    - kraken2=2.0.7_beta
+    - pandas=1.2.5  
+    - requests=2.31.0
+    - scipy=1.10.1
     
 
     
