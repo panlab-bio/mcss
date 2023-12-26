@@ -105,7 +105,7 @@ with open(path_sp_sim,"rb") as f:
 if genome_strain == 0:
     path_strain_genome = os.path.join(path_abs,"data/strain_genome/")
 else:
-    path_strain_genome = os.path.join(path_abs,"data/strain_download_t/")
+    path_strain_genome = os.path.join(path_abs,"data/strain_download/")
     
 
     
