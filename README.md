@@ -48,7 +48,6 @@ bash strain_download.sh
    
        # -o output file 
    
-       # call pbsim to generate fastq reads
 ```
    
    
