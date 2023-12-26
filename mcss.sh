@@ -1005,6 +1005,7 @@ case "$command" in
                 -i|--input)
                     input="$2"
                     input=$(realpath $input)
+                    output=$(realpath $input)
                     flag_in=true
                     shift 2
                     ;;
