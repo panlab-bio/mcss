@@ -23,7 +23,7 @@ df_down.columns = ["sp","acns","path","genome"]
 df_merge = pd.merge(df_strain,df_down,on=["acns"])
 # print("df_merge\n",df_merge)
 
-path_strain_genome = os.path.join(path_abs,"data/strain_download_t")
+path_strain_genome = os.path.join(path_abs,"data/strain_download")
 list_saved = os.listdir(path_strain_genome)
 # print("list_saved\n",list_saved)
 mask = ~df_merge["genome"].isin(list_saved)
