@@ -26,7 +26,7 @@ while read -r srr; do
         awk -F '[\t ]' '{print $2"\t"$3}' $name>$path_out_new/${srr}.out
         # echo "awk -F '[\t ]' '{print $2"\t"$3}' $name>$out_file/${srr}.out"
         grep "s__" $rep |awk -F '[| \t]' '{print$7"_"$8"\t"$9}'   >$path_abu/${srr}_abundance.txt 
-        # echo "grep "s__" $rep |awk -F '[| \t]' '{print$7"_"$8"\t"$9}'   >$path_abu/${srr}_abundance.txt"
+        # echo "grep "s__" $rep |awk -F '[| \t]' '{print$(NF-2)"_"$(NF-1)"\t"$NF}'   >$path_abu/${srr}_abundance.txt"
     else
         if [ -s $name ]; then
             rm $name
