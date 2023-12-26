@@ -9,16 +9,16 @@ sample_n=$8
 
 sim_res=sim_res_${sample_n}
 sim_concat=sim_concat_${sample_n}
-sim_strain=sim_strain${sample_n}
+# sim_strain=sim_strain${sample_n}
 if [ ! -d $path_out/$sim_res ];then
     echo "mkdir $path_out/$sim_res"
     mkdir -p $path_out/$sim_res
 fi
 
-if [ ! -d $path_out/$sim_strain ];then
-    echo "mkdir $path_out/$sim_strain"
-    mkdir -p $path_out/$sim_strain
-fi
+# if [ ! -d $path_out/$sim_strain ];then
+#     echo "mkdir $path_out/$sim_strain"
+#     mkdir -p $path_out/$sim_strain
+# fi
 
 if [ ! -d $path_out/$sim_concat ];then
     echo "mkdir $path_out/$sim_concat"
