@@ -208,7 +208,11 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
         cmd_down = "python "+path_down+" "+ path_tmp_strain+" "+path_abs
         # print(cmd_down)
         print("start to download strain genomes")
-        subprocess.run(cmd_down,shell=True,cwd="./")
+        try:
+            result = subprocess.run(cmd_down,shell=True,cwd="./")
+            result.check_returncode()
+        except subprocess.CalledProcessError as e:
+            sys.exit(1)
         
     if flag_min_depth:#最小depth
         print("min depth")
