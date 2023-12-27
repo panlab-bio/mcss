@@ -87,15 +87,21 @@ path_strain_genome_dl = os.path.join(path_abs,"data/strain_genome_dl")
 os.makedirs(path_strain_genome_dl,exist_ok=True)
 
 
-    
+
 for lp in list_path:
     # print(lp)
-    print("download ",lp)
-    response = requests.get(lp)
-    if response.status_code == 200:
-        file_name = os.path.join(path_strain_genome_dl, os.path.basename(lp))
-        with open(file_name, 'wb') as file:
-            file.write(response.content)
+    flag_d = True
+    try:
+        print("download ",lp)
+        response = requests.get(lp)
+        if response.status_code == 200:
+            file_name = os.path.join(path_strain_genome_dl, os.path.basename(lp))
+            with open(file_name, 'wb') as file:
+                file.write(response.content)
+    except Exception as e:
+        print(f"Error occurred for {lp}: {e}")
+        flag_d = False
+            
             
 list_strain_choice_all = os.listdir(path_strain_genome_dl)
                 
