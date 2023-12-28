@@ -101,7 +101,7 @@ if mode == 1:
 else:
     list_srr_all = sorted(os.listdir(in_file))
     # srr_batch = [srr.split(".")[0].replace("_1","") for srr in list_srr_all if "_1" in srr]
-    srr_batch = [srr.replace(suffix1+suffix,"") for srr in list_srr_all if suffix1 in srr]
+    srr_batch = [srr.replace(suf_pre+suffix,"") for srr in list_srr_all if suf_pre in srr]
     
     srr_batch_new = srr_batch[start:end]
 
