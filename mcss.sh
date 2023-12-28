@@ -365,11 +365,11 @@ case "$command" in
                     shift 2
                     ;;
                 -suf|--suffix)
-                    suf_pre="$2"
+                    suf="$2"
                     shift 2
                     ;;
                 -suf_pair)
-                    suf="$2"
+                    suf_pre="$2"
                     shift 2
                     ;;
                 acc|accurate)
@@ -529,6 +529,8 @@ case "$command" in
                     echo "acc,accurate: accurate mode to seek out the subtree"
                     echo "prol,prolific: prolific mode to seek out the subtree "
                     echo "Choose one between acc and prol, with acc as the default value in sample mode"
+                    echo "suf: suffix of read files. default: fastq.gz"
+                    echo "suf_pair: Suffix used to distinguish paired-end sequencing files. default: _1"
                     
                     echo "pbsim：execute  pbsim3"
                     echo "options for pbsim:"
