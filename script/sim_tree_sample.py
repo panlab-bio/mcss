@@ -153,12 +153,12 @@ path_abu_save = os.path.join(path_sim,"abu",abu_name)#这个时候abu.pkl存的�
 with open(path_abu_save,"wb") as f:
     pickle.dump(list_abu_all,f)
 
-for nsl_i,nsl in enumerate(list_abu_all):
-    path_abu_save_df = path_abu_save.replace(".pkl","_"+str(nsl_i)+".csv") 
-# print("name_sp_list",name_sp_list)
-    df_list_abu_all = pd.DataFrame(nsl)
-    df_list_abu_all.columns=["abu"]
-    df_list_abu_all.to_csv(path_abu_save_df,index=False)
+# for nsl_i,nsl in enumerate(list_abu_all):
+#     path_abu_save_df = path_abu_save.replace(".pkl","_"+str(nsl_i)+".csv") 
+# # print("name_sp_list",name_sp_list)
+#     df_list_abu_all = pd.DataFrame(nsl)
+#     df_list_abu_all.columns=["abu"]
+#     df_list_abu_all.to_csv(path_abu_save_df,index=False)
     
 
 # with open(path_abu_save,"rb") as f:
