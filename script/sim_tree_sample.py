@@ -156,7 +156,7 @@ with open(path_abu_save,"wb") as f:
 for nsl_i,nsl in enumerate(list_abu_all):
     path_abu_save_df = path_abu_save.replace(".pkl","_"+str(nsl_i)+".csv") 
 # print("name_sp_list",name_sp_list)
-    df_list_abu_all = pd.DataFrame(nsl_i)
+    df_list_abu_all = pd.DataFrame(nsl)
     df_list_abu_all.columns=["abu"]
     df_list_abu_all.to_csv(path_abu_save_df,index=False)
     
