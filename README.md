@@ -83,6 +83,7 @@ bash tools/strain_download.sh
 ./mcss.sh pbsim -i sim_com_f/ --mean_depth 5
    
        #  call pbsim3 to generate reads of communities in sim_com_f
+       #  sim_com_f/pbsim/sim_concat_1/sim.fastq
 
 ```
 
