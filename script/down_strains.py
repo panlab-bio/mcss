@@ -87,9 +87,10 @@ path_strain_genome_dl = os.path.join(path_abs,"data/strain_genome_dl")
 os.makedirs(path_strain_genome_dl,exist_ok=True)
 
 
-
+list_strain_choice_all = []
 for lp in list_path:
     # print(lp)
+    lp_name = lp.split("/")[-1]
     flag_d = True
     try:
         print("download ",lp)
@@ -98,15 +99,16 @@ for lp in list_path:
             file_name = os.path.join(path_strain_genome_dl, os.path.basename(lp))
             with open(file_name, 'wb') as file:
                 file.write(response.content)
+            list_strain_choice_all.append(lp_name)
     except Exception as e:
         print(f"Error occurred for {lp}: {e}")
         flag_d = False
             
             
-list_strain_choice_all = os.listdir(path_strain_genome_dl)
+# list_strain_choice_all = os.listdir(path_strain_genome_dl)
                 
 for strain in list_strain_choice_all:
-    # print(strain)
+    print(strain)
     
     strain_name = strain.split("/")[-1].replace(".gz","")
     # print(strain_name)
