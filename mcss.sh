@@ -15,7 +15,7 @@ date=$(date +'%m_%d')
 
 # 检查是否提供了足够的参数
 if [ $# -lt 1 ]; then
-    echo "bash $0 kraken or sim"
+    echo "bash $0 -h"
     exit 1
 fi
 
