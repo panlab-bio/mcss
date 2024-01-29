@@ -17,14 +17,14 @@ conda env create -f env_mcss.yaml
 or:
 conda create -n env_mcss python=3.8.13
 source activate env_mcss
-conda install -c bioconda pbccs
-conda install biopython
+conda install -c bioconda pbccs=6.4.0
+conda install biopython=1.78
 conda install -c bioconda samtools=0.1
-conda install -c bioconda kraken2
-conda install -c bioconda pbsim3
-conda install pandas
-conda install requests
-conda install scipy
+conda install -c bioconda kraken2=2.0.7_beta
+conda install -c bioconda pbsim3=3.0.1
+conda install pandas=1.2.5
+conda install requests=2.31.0
+conda install scipy=1.10.1
 ```
     
 4. activate environment
