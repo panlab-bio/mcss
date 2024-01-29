@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#将community模式下的输入改成pkl文件
-#这里用户自己输入的可能不是pkl
+# Change the input for the community mode to a pickle (pkl) file.
+
 import numpy as np
 import pandas as pd
 import sys
@@ -13,7 +13,7 @@ multi = int(sys.argv[3])
 path_sim = sys.argv[4]
 path_save = os.path.join(path_sim,"community/abu/abu_user.pkl")
 if multi==0:
-    #一个文件
+    # A single file.
     abu_sample_sim_all = []
     path_abu = path_abu_root
     abu_real = pd.read_csv(path_abu,header=None,sep="\t")
@@ -23,7 +23,7 @@ if multi==0:
     
     with open(path_save,"wb") as f:
         pickle.dump(abu_sample_sim_all,f)
-else:
+else: # Multiple files.
     list_sp = sorted(os.listdir(path_sp_root))
     abu_sample_sim_all = []
     for sp in list_sp:
