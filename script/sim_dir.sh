@@ -1,3 +1,4 @@
+# Create a folder to store the results.
 output=$1
 
 if [ ! -d $output ]; then
