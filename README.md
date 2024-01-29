@@ -18,13 +18,13 @@ or:
 conda create -n env_mcss python=3.8.13 -c conda-forge
 source activate env_mcss
 conda install -c bioconda pbccs=6.4.0
-conda install biopython=1.78
+conda install biopython=1.78 -c conda-forge
 conda install -c bioconda samtools=0.1
 conda install -c bioconda kraken2=2.0.7_beta
 conda install -c bioconda pbsim3=3.0.1
-conda install pandas=1.2.5
-conda install requests=2.31.0
-conda install scipy=1.10.1
+conda install pandas=1.2.5 -c conda-forge
+conda install requests=2.31.0 -c conda-forge
+conda install scipy=1.10.1 -c conda-forge
 ```
     
 4. activate environment
