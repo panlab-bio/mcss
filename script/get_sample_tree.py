@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-#把三十个测试数据的data_test,dis_test,shift_test都保存起来
+# Create a Multiway Trees Based on Samples.
 import numpy as np
 import pandas as pd
 import itertools
@@ -10,8 +10,9 @@ import random
 import pickle 
 import copy
 from lib.dis_generate import *
-# from distfit import distfit
 from scipy.stats import lognorm
+
+
 
 path_sim = sys.argv[1]
 path_tax = sys.argv[2]
@@ -26,16 +27,15 @@ if flag_acc_int == 0:
     flag_dis = True
 else:
     flag_dis = False
-
-if change_len_sp == 0:#0的时候不change
+# Do not change when the value is 0.
+if change_len_sp == 0:
     flag_len_sp = False
-    # print("不随机确定")
+    
 else:
     flag_len_sp = True
     
-if same_env == 0:#0的时候不change
+if same_env == 0:
     flag_env = False
-    # print("不是同一环境")
 else:
     flag_env = True
     
@@ -53,6 +53,7 @@ path_name_root = os.path.join(path_sim,"data/sp_cut/")
 path_com = os.path.join(path_sim,"data/sp_cut/")
 list_name = sorted(os.listdir(path_name_root))
 
+# min dis of two list
 def get_min_sp_list_dis(dis_sp_domain,dis_list):
     min_dis = 100
     
@@ -61,22 +62,22 @@ def get_min_sp_list_dis(dis_sp_domain,dis_list):
             min_dis = abs(dis_sp_domain-dis)
     return min_dis
 
-if len(list_name)==1:#用户只提供了单个样本
+if len(list_name)==1:
     flag_one = True
 else:
     flag_one = False
-list_sp_genus_ori_all = [] #记录每个样本的物种池
+list_sp_genus_ori_all = [] # Record the species list for each sample.
 list_abu_all = []
 path_abu_root = os.path.join(path_sim,"data/kraken/abundance")
 for name in list_name:
-    # print(name)\
+    
     abu = name.replace("cutsp","abundance")
     path_abu = os.path.join(path_abu_root,abu)
     df_abu = pd.read_csv(path_abu,header=None,sep="\t")
     df_abu.columns=["Species","cnt"]
     
     path_name = os.path.join(path_name_root,name)
-    # print(path_name)
+    
     sp_cut=pd.read_csv(path_name,header=None,usecols=[0],sep="\t")
     sp_cut.columns=["Species"]
     merge_name = pd.merge(taxonomy,sp_cut,on=["Species"])
@@ -86,22 +87,22 @@ for name in list_name:
     abu_sample = [float("{:.4f}".format(cs/cnt_sum)) for cs in cnt_sample_list]
     if flag_env:
         print("abu env")
-        list_abu_all+=abu_sample #一个环境多个样本的时候直接把所有的abu加起来
-    else:#如果一个环境一个样本
+        list_abu_all+=abu_sample 
+        # When there are multiple samples in one environment, simply sum up all the abundances directly.
+    else:
         print("abu distribution")
-        # path_abu_save = os.path.join(path_sim,"abu/abu.pkl")
+        
         print(len(abu_sample),abu_sample)
-        # dist = distfit(distr='lognorm',verbose = 0)
+        
         x_abu_sample = np.array(abu_sample)
         shape_ln, loc_ln, scale_ln = lognorm.fit(x_abu_sample, floc=0)
         dict_lognorm = {"shape":shape_ln,"loc":loc_ln,"scale":scale_ln}
-        # dist.fit_transform(x_abu_sample)
-        # list_abu_all.append(dist)
+        
         list_abu_all.append(dict_lognorm)
-        # print("abu sample")
         
         
-    dis_sp_list = []#得到了原始的距离列表
+        
+    dis_sp_list = [] # The original distance list.
     for sp_genus in merge_name["Species"].to_list():
         if sp_genus in dict_tree["d"][0]["Archaea"][-1].keys():
             dis_sp_domain = dict_tree["d"][0]["Archaea"][-1][sp_genus]
@@ -109,10 +110,8 @@ for name in list_name:
             dis_sp_domain = dict_tree["d"][0]["Bacteria"][-1][sp_genus]
         dis_sp_list+=[dis_sp_domain]
         
-    if flag_len_sp :#长度可变的情况下，我们需要随机选择物种,如果是单环境多样本，不用考虑这个
-        # len_sp_sample = len(merge_name)
-        # len_sp_new_list = list(range(round(len_sp_sample-0.1*len_sp_sample),round(len_sp_sample+0.1*len_sp_sample)))
-        # len_sp_new = random.choice(len_sp_new_list)
+    if flag_len_sp :#In cases of variable lengths, we need to randomly select species.
+        
         merge_name_genus = merge_name["Genus"].unique()
         taxonomy_genus = taxonomy[taxonomy["Genus"].isin(merge_name_genus)].reset_index(drop=True)
         
@@ -127,14 +126,12 @@ for name in list_name:
                 list_sp_genus_ori.append(sp_genus)
         
         list_sp_genus_ori_all.append(list_sp_genus_ori)        
-        # list_sp_genus = random.sample(list_sp_genus_ori,len_sp_new)
-        # merge_name_sp = taxonomy[taxonomy["Species"].isin(list_sp_genus)].reset_index(drop=True)
-    # else:
+        
     merge_name_sp = copy.deepcopy(merge_name)
         
     data_sp_real,datad_name30 = get_num_new_2(merge_name_sp)
     dis_all_dict_real,data_sp_real_2 = get_dis_list_alltree(merge_name_sp,path_tax,path_nw,path_sim,path_abs) 
-    #这个得到的data_sp_real好像不对,为了省事让他是空
+    
     dis_tree30,shift_tree30 = get_dis_tree(dis_all_dict_real,datad_name30,data_sp_real,merge_name_sp)
     data_tree_30.append(data_sp_real)
     dis_tree_30.append(dis_tree30)
@@ -144,50 +141,20 @@ if flag_env:
     abu_name = "abu_env.pkl"
 else:
     abu_name = "abu_sample.pkl"
-    # path_abu_save = os.path.join(path_sim,"abu/abu.pkl")#这个时候abu.pkl存的不是分布，而是物种丰度列表的和
-    # with open(path_abu_save) as f:
-    #     pickle.dump(list_abu_all,f)
-path_abu_save = os.path.join(path_sim,"abu",abu_name)#这个时候abu.pkl存的不是分布，而是物种丰度列表的和
+    
+path_abu_save = os.path.join(path_sim,"abu",abu_name) #Sum of the species abundance list.
 print(path_abu_save)
 print(list_abu_all[0])
 with open(path_abu_save,"wb") as f:
     pickle.dump(list_abu_all,f)
-# with open(path_abu_save,"rb") as f:
-#     list_abu_all = pickle.load(f)
-# dist = list_abu_all[0]
-# print("dist",dist.generate(1))
-# else:
-#     path_abu_save = os.path.join(path_sim,"abu/abu.pkl")
-#     dist.save(path_abu_save)
-#不用保存了，因为在这个文件里自己调用了
-#         path_sample = os.path.join(path_sim,"data/sample")
-#         path_name = os.path.join(path_sample,"name_sample.pkl")
-#         path_data = os.path.join(path_sample,"data_sample.pkl")
-#         path_dis = os.path.join(path_sample,"dis_sample.pkl")
-#         path_shift = os.path.join(path_sample,"shift_sample.pkl")
-#         path_dict = os.path.join(path_sample,"dict_sample.pkl")
 
-#         with open(path_dict,"wb") as f:
-#             pickle.dump(dis_all_dict_real,f)
-
-#         with open(path_name,"wb") as f:
-#             pickle.dump(name_tree_30,f)
-
-#         with open(path_data,"wb") as f:
-#             pickle.dump(data_tree_30,f)
-
-#         with open(path_dis,"wb") as f:
-#             pickle.dump(dis_tree_30,f)
-
-#         with open(path_shift,"wb") as f:
-#             pickle.dump(shift_tree_30,f)
 
 
 path_tree_name =  os.path.join(path_tree,"data_tree_name.pkl")
 path_tree_data =  os.path.join(path_tree,"data_sp_alltree.pkl")
 path_tree_dis =  os.path.join(path_tree,"dis_tree.pkl")
 path_tree_shift =  os.path.join(path_tree,"shift_tree.pkl")
-# print(path_tree_shift)
+
 
 with open(path_tree_data,"rb") as f:
     data_alltree = pickle.load(f)  
@@ -203,8 +170,8 @@ with open(path_tree_shift,"rb") as f:
 data_tree_root,dis_tree_root,dis_shift_tree_root = get_root_node(data_alltree,dis_tree,shift_tree)  
 datad_name_root = [["root"]]+datad_name
 name_sp_list = []
-if flag_env:#就是一个环境多个样本
-    #这和env模式类似，但是我们不用mean_shift了，直接抽样
+if flag_env:# Multiple samples in one environment.
+   
     position_phy = dict()
     for i,name_tree in enumerate(name_tree_30):
         for sp_i,name_sp in enumerate(name_tree[1]):
@@ -231,11 +198,11 @@ if flag_env:#就是一个环境多个样本
                     data_tree_root,dis_tree_root,datad_name_root,0,False,flag_dis)
             name_sp_list.append(list(name_sp_12))
 
-else:#一个环境只有一个样本
+else: # One environment with only one sample.
     
-    # for list_sp_genus_ori,data_tree in zip(list_sp_genus_ori_all,data_tree_30):
+   
     for i,data_tree in enumerate(data_tree_30):
-        # print("i",i)
+        
         for a_sim in range(cnt_sample):
             if flag_len_sp:
                 list_sp_genus_ori = list_sp_genus_ori_all[i]
@@ -252,8 +219,8 @@ else:#一个环境只有一个样本
                 dis_sp_sim,dis_shift_sim = get_dis_tree(dict_sim,name_sim,data_sim,merge_name_sp)
                 shuffle = False
             else:
-                # print("单环境单样本")
-                data_sim = copy.deepcopy(data_tree)#不改物种
+                
+                data_sim = copy.deepcopy(data_tree) 
                 dis_sp_sim = dis_tree_30[i]
                 dis_shift_sim = shift_tree_30[i]
                 if cnt_sample==1:
