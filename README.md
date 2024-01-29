@@ -70,6 +70,7 @@ bash tools/strain_download.sh
 
 3. simulate based on fastq reads
 ```
+# Recommended for execution exclusively on high-performance servers.
 ./mcss.sh sample -i kraken_fastq/kraken_oral/ -o sim_sample_paired p 
    
        #  paired fastq reads
