@@ -15,7 +15,7 @@ cd mcss
 ```
 conda env create -f env_mcss.yaml
 or:
-conda create -n env_mcss python=3.8.13
+conda create -n env_mcss python=3.8.13 -c conda-forge
 source activate env_mcss
 conda install -c bioconda pbccs=6.4.0
 conda install biopython=1.78
