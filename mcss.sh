@@ -1,27 +1,36 @@
-#一个脚本将所有的联系起来
 #!/bin/bash
-#total是要根据fastq个数来的
-#确定输入的参数
+
+# environmental condition
 env_array=("gut" "oral" "skin" "marine" "soil" "rhizosphere")
 
-current_dir=$(dirname $(realpath $0))
 # path_pbsim=$current_dir/tools/pbsim3/src/pbsim
-# echo $path_pbsim
-# echo "路径" $current_dir
-# 默认值
+current_dir=$(dirname $(realpath $0))
+
 sim_param=""
 get_param=""
 date=$(date +'%m_%d')
 
-# 检查是否提供了足够的参数
+# Check whether sufficient parameters have been provided.
 if [ $# -lt 1 ]; then
     echo "bash $0 -h"
     exit 1
 fi
 
-# 通过命令行参数确定要执行的操作
+# Determine the operation to be executed through command-line parameters.
+# env, sample, community, or pbsim
 command="$1"
-shift # 移除第一个参数，剩下的参数将由 getopts 处理
+shift 
+
+# path_tax: gtdb_taxonomy.tsv
+# env: environment
+# output: output folder path
+# n_samples: number of samples 
+# flag_acc: acc or prolific mode
+
+# cnt_strain: the number of strains per species
+# depth: depth of coverage
+# method: pbsim method
+# model: pbsim error model
 
 case "$command" in
     "env")
@@ -31,10 +40,9 @@ case "$command" in
         n_samples=1
         flag_in=false
         flag_sl=0
-        # flag_im=0
         flag_acc=0
         flag_acc_v=false
-        # 解析cmss sim的参数
+        
         while [[ $# -gt 0 ]]; do
             case "$1" in
                 "-e" | "--env")
@@ -46,10 +54,6 @@ case "$command" in
                     n_samples="$2"
                     shift 2
                     ;;
-                # sl|st_len)
-                #     flag_sl=1
-                #     shift 
-                #     ;;
                 acc|accurate)
                     if [ "$flag_acc_v" = true ]; then
                         echo "these two options (acc, prol) are in conflict"
@@ -82,19 +86,6 @@ case "$command" in
                     method="qshmm"
                     model="QSHMM-RSII.model"
                     pass_num=10
-                    # if which pbsim3 &>/dev/null; then
-#                     if [ -f $path_pbsim ]; then
-#                         # path_pbsim=$(which pbsim3)
-#                         echo " pbsim3 in tools "
-                        
-#                     elif which pbsim3 &>/dev/null; then
-#                         echo "pbsim3 in path"
-#                         path_pbsim=$(which pbsim3)
-#                     else
-#                         echo "please install pbsim3"
-#                         exit 1
-                    
-#                     fi
                     
                     shift
                     ;;
@@ -110,7 +101,7 @@ case "$command" in
                     ;;
                 g|genome)
                     if [ "$flag_pbsim" = false ]; then
-                        echo "only meaningful with pbsim"
+                        echo "only meaningful with pbsim, not recommended"
                         exit 1
                     fi
                     flag_genome=0
@@ -177,19 +168,17 @@ case "$command" in
                     echo "-e,--env: choice an environment. gut,oral,skin,marine,soil,rhizosphere"
                     echo "-o,--output: output dir " 
                     echo "-n,--n_samples: count of simulate samples. default:1 "
-                    # echo "sl,st_len: exclude significant species count bias"
                     echo "acc,accurate: accurate mode to seek out the subtree"
                     echo "prol,prolific: prolific mode to seek out the subtree "
                     echo "Choose one between acc and prol, with prol as the default value in env mode"
-                    
                     echo "pbsim：execute  pbsim3"
                     echo "options for pbsim:"
-                    echo "-s,--strain：number of strain"
+                    echo "-s,--strain：number of strain ,default 1"
                     echo "--min_depth,--mean_depth：min or average depth of species, min "
                     echo "--method: qshmm, errhmm. default:qshmm"
                     echo "--model QSHMM-ONT.model, QSHMM-RSII.model, ERRHMM-ONT.model, ERRHMM-RSII.model, ERRHMM-SEQUEL.model. default:QSHMM-RSII.model"
                     echo "--pass-num: if number of passes(pass-num)>1,multi-pass sequencing is performed to get hifi reads. default:10"
-                    # echo "im,intermediate: keep intermediate results"
+                    
                     
                     exit 0
                     ;;
@@ -200,9 +189,7 @@ case "$command" in
                     ;;
             esac
         done
-        # echo "执行cmss sim的操作，参数 -n $sim_param"
-        # 在这里添加您的cmss sim代码，可以使用$sim_param
-        #env模式下只需要abu这个文件夹，sp_cut啥的都不需要
+       
         if [ "$flag_in" = false ]; then
             echo "error : choice an env"
             exit 1
@@ -244,12 +231,10 @@ case "$command" in
             if [ ! -d $output/pbsim ]; then
                 mkdir -p $output/pbsim
             fi
-            #这里有两种思路，一组就是直接调用mcss pbsim 
-            #一种就是python 
-            #pyhon需要把pbsim的东西全都复刻
-            #mcss需要判断输入了哪些
+            
+            # call PBSim3 to generate the genome.
             python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
-            #这个的第二个参数和pbsim单独选项里的参数不一样，因为那个直接输入的input就是sim文件，我们的输出才是
+            
         fi
 
         ;;
@@ -282,20 +267,16 @@ case "$command" in
             local mode_flag=$2
             local batch=$3
             if [ "$mode_flag" = true ]; then
-                # echo "2"
                 local total=$(($(ls $path_dir |wc -l)/2))
 
             else
-                # echo "1"
                 local total=$(ls $path_dir |wc -l)
             fi
 
             if [ $batch -gt $total ]; then
-                # echo "warning: the number of batch exceeds the total count"
-                
+            
                 batch=$total
             fi
-            # echo "batch" $batch
             local part=$((total/batch))
             
             if [ $((part*batch)) != $total ]; then
@@ -314,31 +295,20 @@ case "$command" in
             parts[parts_len-1]=$total
             echo "${parts[@]}"
         }
-        #得到kraken的目录
-        # if which kraken2 &>/dev/null; then
-        #     path_kraken=$(which kraken2)
-        # else
-        #     echo "install kraken2 first"
-        #     exit 1
-        # fi
-        #path_kraken是执行文件，dir_kraken是执行目录，高一级
-        # dir_kraken=${path_kraken%/*}
+
         
         dir_kraken=$current_dir/tools
-        # echo $dir_kraken
-        # kraken数据库地址
+
         path_db=$dir_kraken/kraken_db
-        # echo $path_db
-        # kraken
-        #用来判断是不是pair模式
+        # Determine whether it is in pair mode.
         mode_flag=false
-        #是否从断点重新开始
+        # Whether there is an input file.
         flag_in=false
         current_dir=$(dirname $(realpath $0))
         output=$current_dir/sim_${date}
         path_script=$current_dir/script
         path_tax="$current_dir/data/gtdb_taxonomy.tsv"
-        # flag_len=0
+        
         batch=1
         same_env=0
         n_samples=1
@@ -349,7 +319,7 @@ case "$command" in
         suf="fastq.gz"
         while [[ $# -gt 0 ]]; do
             case "$1" in
-            #i必须是绝对路径,实现了将相对路径转换为绝对路径
+            #Convert a relative path to an absolute path.
                 "-i" | "--input")
                     flag_in=true
                     input="$2"
@@ -397,7 +367,7 @@ case "$command" in
                     shift 2
                     ;;
                 "p"|"paired")
-                    # echo "p"
+                    
                     mode_flag=true
                     shift 
                     ;;
@@ -410,10 +380,7 @@ case "$command" in
                     path_db="$2"
                     shift 2
                     ;;
-                # "nl"|"new_len")
-                #     flag_len=1
-                #     shift
-                #     ;;
+       
                 "ml"|"multi_sample")
                     same_env=1
                     shift
@@ -428,18 +395,6 @@ case "$command" in
                     method="qshmm"
                     model="QSHMM-RSII.model"
                     pass_num=10
-#                     if [ -f $path_pbsim ]; then
-#                         # path_pbsim=$(which pbsim3)
-#                         echo " pbsim3 in tools "
-                        
-#                     elif which pbsim3 &>/dev/null; then
-#                         echo "pbsim3 in path"
-#                         path_pbsim=$(which pbsim3)
-#                     else
-#                         echo "please install pbsim3"
-#                         exit 1
-                    
-#                     fi
                     
                     shift
                     ;;
@@ -455,7 +410,7 @@ case "$command" in
                     ;;
                 g|genome)
                     if [ "$flag_pbsim" = false ]; then
-                        echo "only meaningful with pbsim"
+                        echo "only meaningful with pbsim, not recommended"
                         exit 1
                     fi
                     flag_genome=0
@@ -524,7 +479,6 @@ case "$command" in
                     echo -e "-b, --batch: Divide into \"batch\" parts and run simultaneously"
                     echo "-db,--kraken_db: path of kraken database. defalut kraken/db"
                     echo "-asp,--abu_sp: minimum species abundance. default:0.001"
-                    # echo "nl,new_len: change count of sample species."
                     echo "ml,multi_sample: more than one samples from the same env"
                     echo "acc,accurate: accurate mode to seek out the subtree"
                     echo "prol,prolific: prolific mode to seek out the subtree "
@@ -534,7 +488,7 @@ case "$command" in
                     
                     echo "pbsim：execute  pbsim3"
                     echo "options for pbsim:"
-                    echo "-s,--strain：number of strain"
+                    echo "-s,--strain：number of strain,default 1"
                     echo "--min_depth,--mean_depth：min or average depth of species"
                     echo "--method: qshmm, errhmm. default:qshmm"
                     echo "--model QSHMM-ONT.model, QSHMM-RSII.model, ERRHMM-ONT.model, ERRHMM-RSII.model, ERRHMM-SEQUEL.model. default:QSHMM-RSII.model"
@@ -548,8 +502,7 @@ case "$command" in
                     ;;
             esac
         done
-        # echo "执行cmss sample的操作，参数 -i "
-        # 在这里添加您的cmss get代码，可以使用$get_param
+        
         if [ "$flag_in" = false ]; then
             echo "error : no input"
             exit 1
@@ -583,19 +536,18 @@ case "$command" in
             trap cleanup INT
             read -p "download kraken ref database (GTDB 207) ? (y/n): " choice
             if [ "$choice" = "y" ] || [ "$choice" = "Y" ]; then
-                # 用户输入是 "y" 或 "Y"，执行程序
-                bash ./tools/install_kraken_db.sh
-                # 在这里添加你要执行的命令
-            elif [ "$choice" = "n" ] || [ "$choice" = "N" ]; then
                 
-                # 用户输入是 "n" 或 "N"，不执行程序
+                bash ./tools/install_kraken_db.sh
+                
+            elif [ "$choice" = "n" ] || [ "$choice" = "N" ]; then
+
                 exit 1
             else
-                # 用户输入既不是 "y" 也不是 "n"
+                
                 exit 1
             fi
         fi
-        # echo "batch" $batch
+       
         if [ ! -d /dev/shm/kraken_db ]; then
             echo "cp db"
             cp -r $path_db /dev/shm/kraken_db
@@ -604,15 +556,13 @@ case "$command" in
         echo "batch" $batch
         parts=($(get_part $input $mode_flag $batch))
         parts_len=${#parts[@]}
-        # echo ${parts[*]}
-        # echo $parts_len
+        
         arry_1=()
         start_l=0 
         for ((i=0;i<parts_len;i++)); do
-            # echo ${parts[i]}
+            
             cmd_tmp="python $path_script/get_sample_sp.py $input $path_com $mode $dir_kraken $path_map_db $start_l ${parts[i]} $suf $suf_pre"
-            #需要给cmd加一个括号，不然不行
-            # arry_1+=("$cmd_tmp")
+            
             arry_1=("${arry_1[@]}" "$cmd_tmp")
             start_l=${parts[i]}
         done
@@ -639,9 +589,7 @@ case "$command" in
             mkdir $output/community/data/kraken/out_new
             mkdir $output/community/data/kraken/abundance
             
-        fi
-        
-
+        fi       
         
         run_background_commands "${arry_1[@]}"
         trap 'if [ "$normal_exit" = false ]; then kill_background_commands; fi' EXIT
@@ -661,9 +609,8 @@ case "$command" in
         arry_2=()
         start_l=0
         for ((i=0;i<parts_len;i++)); do
-            # echo ${parts[i]}
+            
             cmd_tmp="python $path_script/2_get_sp.py $path_data $path_s1 $abu_sp $start_l ${parts[i]} "
-            #需要给cmd加一个括号，不然不行
             arry_2+=("$cmd_tmp")
             start_l=${parts[i]}
         done
@@ -704,17 +651,14 @@ case "$command" in
             if [ ! -d $output/pbsim ]; then
                 mkdir -p $output/pbsim
             fi
-            #这里有两种思路，一组就是直接调用mcss pbsim 
-            #一种就是python 
-            #pyhon需要把pbsim的东西全都复刻
-            #mcss需要判断输入了哪些
+          
             python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
-            #这个的第二个参数和pbsim单独选项里的参数不一样，因为那个直接输入的input就是sim文件，我们的输出才是
+            
         fi
         ;;
 ########################################################################################### community        
     "community")
-        # 解析cmss get的参数
+        
         flag_in=false
         current_dir=$(dirname $(realpath $0))
         path_script=$current_dir/script
@@ -772,18 +716,7 @@ case "$command" in
                     method="qshmm"
                     model="QSHMM-RSII.model"
                     pass_num=10
-#                     if [ -f $path_pbsim ]; then
-#                         # path_pbsim=$(which pbsim3)
-#                         echo " pbsim3 in tools "
-                        
-#                     elif which pbsim3 &>/dev/null; then
-#                         echo "pbsim3 in path"
-#                         path_pbsim=$(which pbsim3)
-#                     else
-#                         echo "please install pbsim3"
-#                         exit 1
-                    
-#                     fi
+
                     
                     shift
                     ;;
@@ -799,7 +732,7 @@ case "$command" in
                     ;;
                 g|genome)
                     if [ "$flag_pbsim" = false ]; then
-                        echo "only meaningful with pbsim"
+                        echo "only meaningful with pbsim, not recommended"
                         exit 1
                     fi
                     flag_genome=0
@@ -867,7 +800,7 @@ case "$command" in
                     echo "-a,--abu：abundance file or abundance of a env"
                     echo "pbsim：execute  pbsim3"
                     echo "options for pbsim:"
-                    echo "-s,--strain：number of strain"
+                    echo "-s,--strain：number of strain,default 1"
                     echo "--min_depth,--mean_depth：min or average depth of species"
                     echo "--method: qshmm, errhmm. default:qshmm"
                     echo "--model QSHMM-ONT.model, QSHMM-RSII.model, ERRHMM-ONT.model, ERRHMM-RSII.model, ERRHMM-SEQUEL.model. default:QSHMM-RSII.model"
@@ -884,17 +817,17 @@ case "$command" in
         done
         
         if [ "$flag_f" = true ]; then
-            #n_samples=1
+            
             multi=0
         else
-            #n_samples=$(ls $input |wc -l )
+            
             multi=1
         fi
         if [ ! -d $output ]; then
             mkdir -p $output/community
             mkdir -p $output/community/abu
         fi
-        #这个还是要跑一下的，万一community有，而abu没有
+        
         if [ ! -d $output/community/abu ]; then
             mkdir -p $output/community/abu
         else
@@ -918,7 +851,7 @@ case "$command" in
                 sim_mode=2
                 path_abu_new=$(realpath $path_abu)
                 python $path_script/save_community_abu.py $input $path_abu_new $multi $output
-                #执行完上面的代码就已经保存了结果
+               
                 
             fi
         fi
@@ -932,8 +865,7 @@ case "$command" in
         if [ "$flag_depth" = true ]; then
                 depth=$depth_pb
         fi
-        # echo " my mean depth"$depth $depth_pb
-        # echo $flag_f $multi
+        
 
         path_com=$output/community
         echo -e "\033[32minput file\033[0m :$input"
@@ -966,20 +898,16 @@ case "$command" in
             if [ ! -d $output/pbsim ]; then
                 mkdir -p $output/pbsim
             fi
-            #这里有两种思路，一组就是直接调用mcss pbsim 
-            #一种就是python 
-            #pyhon需要把pbsim的东西全都复刻
-            #mcss需要判断输入了哪些
+            
             python $path_script/get_strain.py $current_dir $output $cnt_strain $depth $type_depth $path_abu_new $sim_mode  $method $model_new $pass_num $flag_genome
-            #这个的第二个参数和pbsim单独选项里的参数不一样，因为那个直接输入的input就是sim文件，我们的输出才是
+            
         fi
         
-        
-        # 在这里添加您的cmss get代码，可以使用$get_param
         ;;
 ############################################################################################# pbsim   
     "pbsim")
         flag_genome=1
+        flag_pbsim=true
         cnt_strain=1
         depth=$cnt_strain
         type_depth=0
@@ -990,19 +918,7 @@ case "$command" in
         pass_num=10
         current_dir=$(dirname $(realpath $0))
         path_script=$current_dir/script
-#         if [ -f $path_pbsim ]; then
-#             # path_pbsim=$(which pbsim3)
-#             echo " pbsim3 in tools "
 
-#         elif which pbsim3 &>/dev/null; then
-#             echo "pbsim3 in path"
-#             path_pbsim=$(which pbsim3)
-#         else
-#             echo "please install pbsim3"
-#             exit 1
-
-#         fi
-        # 解析cmss sim的参数
         while [[ $# -gt 0 ]]; do
             case "$1" in
                 -i|--input)
@@ -1019,7 +935,7 @@ case "$command" in
                     ;;
                 g|genome)
                     if [ "$flag_pbsim" = false ]; then
-                        echo "only meaningful with pbsim"
+                        echo "only meaningful with pbsim, not recommended"
                         exit 1
                     fi
                     flag_genome=0
@@ -1063,10 +979,10 @@ case "$command" in
                     ;;
                 -h|--help)
                     echo "-i,--input: input dir " 
-                    echo "-s,--strain：number of strain"
-                    # echo "-a,--abu：abundance file or abundance of a env"
+                    echo "-s,--strain：number of strain,default 1"
+                    
                     echo "--min_depth, --mean_depth：min or average depth of species"
-                    # echo "-d,--depth: depth"
+                    
                     echo "--method: qshmm, errhmm. default:qshmm"
                     echo "--model QSHMM-ONT.model, QSHMM-RSII.model, ERRHMM-ONT.model, ERRHMM-RSII.model, ERRHMM-SEQUEL.model. default:QSHMM-RSII.model"
                     echo "--pass-num: if number of passes(pass-num)>1,multi-pass sequencing is performed to get hifi reads. default:10"
@@ -1104,17 +1020,78 @@ case "$command" in
         if [ ! -d $output/pbsim ]; then
             mkdir -p $output/pbsim
         fi
-        # echo $type_depth
-        # if [ ! -d $input/sim_concat ]; then
-        #     mkdir $input/sim_concat 
-        # fi
+
         python $path_script/get_strain.py $current_dir $input $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
+        ;;
+        
+############################################################################################# strain   
+    "strain")
+        flag_genome=1
+        flag_pbsim=true
+        cnt_strain=1
+        flag_in=false
+        current_dir=$(dirname $(realpath $0))
+        path_script=$current_dir/script
+        while [[ $# -gt 0 ]]; do
+            case "$1" in
+                -i|--input)
+                    input="$2"
+                    input=$(realpath $input)
+                    output=$(realpath $input)
+                    flag_in=true
+                    shift 2
+                    ;;
+                -s|--strain)
+                    cnt_strain="$2"
+                    
+                    shift 2
+                    ;;
+                g|genome)
+                    if [ "$flag_pbsim" = false ]; then
+                        echo "only meaningful with pbsim, not recommended"
+                        exit 1
+                    fi
+                    flag_genome=0
+                    shift 2
+                    ;;
+                -h|--help)
+                    echo "-i,--input: input dir " 
+                    echo "-s,--strain：number of strain,default 1"
+                    exit 0
+                    ;;
+                *)
+                    echo "error: -$1"
+                    echo " mcss strain -h for usage"
+                    exit 1
+                    ;;
+            esac
+        done
+        if [ "$flag_in" = false ]; then
+            echo "error : no input"
+            exit 1
+        fi
+
+        abu_name=$(ls $input/community/abu/)
+        if [ "$abu_name" = "abu_env.pkl" ]; then
+            sim_mode=0
+        elif [ "$abu_name" = "abu_sample.pkl" ]; then
+            sim_mode=1
+        elif [ "$abu_name" = "abu_user.pkl" ]; then
+            sim_mode=2
+        fi
+        echo "sim_mode "$sim_mode
+        path_abu_new=$input/community/abu/$abu_name
+        model_new=$current_dir/data/pbsim_model/$model
+
+
+        python $path_script/sim_strains.py $current_dir $input $cnt_strain   $path_abu_new $sim_mode $flag_genome
         ;;
     "-h")
         echo "mcss.sh env: Environment-specific simulated data generation "
         echo "mcss.sh sample: Generating simulated data based on real data "
         echo "mcss.sh community: Commuinty specified by the user"
         echo "mcss.sh pbsim:  execute pbsim3"
+        echo "mcss.sh strain: generate strains"
         exit 0
         ;;
     *)
@@ -1122,6 +1099,8 @@ case "$command" in
         echo " mcss -h for usage"
         exit 1
         ;;
+
+    
 esac
 
 exit 0
