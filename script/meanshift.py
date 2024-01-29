@@ -1,18 +1,18 @@
 # -*- coding: utf-8 -*-
-#对统计得到的data_all进行聚类模拟，只是学习真实数据，但是没模拟
+# Simulate clustering on the statistically obtained data_all, merely learning from real data without actual simulation
 path_meanshift = os.path.join(path_sp_cnt,"meanshift")
 if not os.path.exists(path_meanshift):
     os.makedirs(path_meanshift)
-#将meanshif的结果保存起来
+# Save the results of mean shift.
 def save_meanshift(data_all,path_meanshift = path_meanshift):
     level = ["d","p","c","o","f","g"]
 
     criteria = (cv2.TERM_CRITERIA_EPS+cv2.TERM_CRITERIA_MAX_ITER,10,1) 
-    #kmeans的评价指标
+    # Evaluation metrics for k-means 
     K = 2
-    #k代表了这个层级下面lineage的个数
-    #那么我meanshif得到的聚类数目是mk （meanshift K)
-    flag =True #看看是不是界，界用kmeans
+    # k represents the number of lineages under this hierarchy.
+    # The number of clusters obtained by mean shift is denoted as mk
+    flag =True # Check if it's definitive; use k-means for boundaries.
     for index_l,i in enumerate(data_all):
         path_x = os.path.join(path_meanshift,"x_"+level[index_l]+".pkl")
         path_label = os.path.join(path_meanshift,"label_"+level[index_l]+".pkl")
