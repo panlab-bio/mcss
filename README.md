@@ -84,6 +84,7 @@ bash tools/strain_download.sh
    
        #  call pbsim3 to generate reads of communities in sim_com_f
        #  sim_com_f/pbsim/sim_concat_1/sim.fastq
+```
 
 5. generate strains ( only strain genomes )
 ```
