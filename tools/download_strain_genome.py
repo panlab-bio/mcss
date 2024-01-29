@@ -15,6 +15,8 @@ path_cur = os.path.dirname(path_abs)
 path_mcss = os.path.dirname(path_cur)
 print(path_cur)
 print(path_mcss)
+
+#Nucleotide substitution. 
 def replace_n_with_random(sequence):
     replaced_sequence = ""
     nucleotides = ['A', 'T', 'C', 'G']
@@ -24,7 +26,7 @@ def replace_n_with_random(sequence):
         else:
             replaced_sequence += base
     return replaced_sequence
-
+#Sequence processing.
 def process_fasta_file(input_file, output_file_name):
     with gzip.open(input_file, "rt") as fasta_gz_file:
         # has_n = any("N" in record.seq for record in SeqIO.parse(fasta_gz_file, "fasta"))
@@ -49,7 +51,7 @@ def process_fasta_file(input_file, output_file_name):
         with open(output_file_name, "w") as output_file:
             SeqIO.write(records, output_file, "fasta")
     
-#把结果放到一起
+# Combine the results.
 def concatenate_sequences(input_file, output_file_name):
     sequences = []
     flag = True
@@ -63,7 +65,7 @@ def concatenate_sequences(input_file, output_file_name):
     record_1.seq=Seq(concatenated_sequence)
     with open(output_file_name,"w") as output_file:
         SeqIO.write(record_1,output_file,"fasta")
-
+# get genome path
 def acns_path_fun_new_2(acn_a,path_genome):
 # acn_a = "RS_GCF_004114995.1"|
     name_acn = acn_a.split("_")
@@ -120,7 +122,7 @@ list_path = df_strain_path["path"].to_list()
 
 
 
-# for lp in list_path[:2]:
+
 for lp in list_path:
     # print(lp)
     response = requests.get(lp)
@@ -129,7 +131,7 @@ for lp in list_path:
         with open(file_name, 'wb') as file:
             file.write(response.content)
             
-#这个基因组用来保存解压后的fasta文件
+
 
 list_strain_choice_all = os.listdir(path_strain_genome_dl)
                 
@@ -143,10 +145,7 @@ for strain in list_strain_choice_all:
     path_strain_name = os.path.join(path_strain_genome,strain_name)
     # print(strain_new,path_strain_name)
     if not os.path.exists(path_strain_name):
-    #     # print(path_strain_name)
-        # cmd_unzip = "gunzip -c "+ strain +" > "+ path_strain_name
-        # subprocess.run(cmd_unzip,shell=True)
-        #根本不需要解压，因为拼接和去N操作输入就是gz,输出就是非压缩文件
+
         
         process_fasta_file(strain_new,path_strain_name)
         concatenate_sequences(path_strain_name,path_strain_name)
