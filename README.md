@@ -95,7 +95,7 @@ bash tools/strain_download.sh
 
 ```
 
-5. help doc
+6. help doc
 ```
 ./mcss.sh -h
 ./mcss.sh env -h
