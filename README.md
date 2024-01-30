@@ -13,6 +13,8 @@ cd mcss
 ```
 3. create python environment
 ```
+# The tool is currently developed based on amd64 POSIX and has undergone testing only on the Linux operating system.
+# We are dedicated to resolving any issues encountered by users on different operating systems and have plans to introduce support for additional systems in future updates.
 conda env create -f env_mcss.yaml
 or:
 conda create -n env_mcss python=3.8.13 -c conda-forge
