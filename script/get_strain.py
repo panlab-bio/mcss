@@ -144,7 +144,7 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
         scale_ln = abu_log_norm['scale']
 
     
-        abu_sample_sim_1000 = lognorm.rvs(s=shape_ln, loc=loc_ln, scale=scale_ln, size=1000)
+        abu_sample_sim_1000 = list(lognorm.rvs(s=shape_ln, loc=loc_ln, scale=scale_ln, size=1000))
     else:
         print("mode 2")
         abu_sample_sim = abu_real[n_index]
