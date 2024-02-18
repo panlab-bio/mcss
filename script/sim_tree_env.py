@@ -8,7 +8,7 @@ import subprocess
 import sys
 import os
 import random
-import pickle 
+# import pickle 
 import copy
 from lib.dis_generate import *
 
@@ -26,44 +26,44 @@ else:
     flag_dis = False
 
 path_tree =  os.path.join(path_abs,"data/n_ary_tree")
-path_tree_name =  os.path.join(path_tree,"data_tree_name.pkl")
-path_tree_dict =  os.path.join(path_tree,"dis_all_dict_alltree.pkl")
-path_tree_data =  os.path.join(path_tree,"data_sp_alltree.pkl")
-path_tree_dis =  os.path.join(path_tree,"dis_tree.pkl")
-path_tree_shift =  os.path.join(path_tree,"shift_tree.pkl")
+path_tree_name =  os.path.join(path_tree,"data_tree_name.json")
+path_tree_dict =  os.path.join(path_tree,"dis_all_dict_alltree.json")
+path_tree_data =  os.path.join(path_tree,"data_sp_alltree.json")
+path_tree_dis =  os.path.join(path_tree,"dis_tree.json")
+path_tree_shift =  os.path.join(path_tree,"shift_tree.json")
 
-with open(path_tree_data,"rb") as f:
-    data_alltree = pickle.load(f)  
+with open(path_tree_data,"r") as f:
+    data_alltree = json.load(f)  
 
-with open(path_tree_dict,"rb") as f:
-    dict_tree = pickle.load(f)
+with open(path_tree_dict,"r") as f:
+    dict_tree = json.load(f)
     
-with open(path_tree_name,"rb") as f:
-    datad_name = pickle.load(f)
+with open(path_tree_name,"r") as f:
+    datad_name = json.load(f)
     
-with open(path_tree_dis,"rb") as f:
-    dis_tree = pickle.load(f)
-with open(path_tree_shift,"rb") as f:
-    shift_tree = pickle.load(f)
+with open(path_tree_dis,"r") as f:
+    dis_tree = json.load(f)
+with open(path_tree_shift,"r") as f:
+    shift_tree = json.load(f)
 
 path_train = os.path.join(path_abs,"data/env",env)
-path_name = os.path.join(path_train,"name_env.pkl")
-path_data = os.path.join(path_train,"data_env.pkl")
-path_dis = os.path.join(path_train,"dis_env.pkl")
-path_shift = os.path.join(path_train,"shift_env.pkl")
+path_name = os.path.join(path_train,"name_env.json")
+path_data = os.path.join(path_train,"data_env.json")
+path_dis = os.path.join(path_train,"dis_env.json")
+path_shift = os.path.join(path_train,"shift_env.json")
 
 
-with open(path_data,"rb") as f:
-    data_tree_train = pickle.load(f)
+with open(path_data,"r") as f:
+    data_tree_train = json.load(f)
     
-with open(path_name,"rb") as f:
-    name_tree_train = pickle.load(f)
+with open(path_name,"r") as f:
+    name_tree_train = json.load(f)
     
-with open(path_dis,"rb") as f:
-    dis_tree_train = pickle.load(f)
+with open(path_dis,"r") as f:
+    dis_tree_train = json.load(f)
     
-with open(path_shift,"rb") as f:
-    shift_tree_train = pickle.load(f)
+with open(path_shift,"r") as f:
+    shift_tree_train = json.load(f)
     
 taxonomy = pd.read_csv(path_tax,sep="\t")
 list_ar = taxonomy[taxonomy["Domain"]=="Archaea"]["Phylum"].to_list()
@@ -136,12 +136,12 @@ while cnt_sub_tree<cnt_sample:
             
 
 
-path_save = os.path.join(path_sim,"species","sp_list.pkl")
+path_save = os.path.join(path_sim,"species","sp_list.json")
 
-with open(path_save,"wb") as f:
-    pickle.dump(name_sp_list,f)
+with open(path_save,"w") as f:
+    json.dump(name_sp_list,f)
 for nsl_i,nsl in enumerate(name_sp_list):
-    path_save_df = path_save.replace(".pkl","_"+str(nsl_i)+".csv") 
+    path_save_df = path_save.replace(".json","_"+str(nsl_i)+".csv") 
 
     df_name_sp_list = pd.DataFrame(nsl)
     df_name_sp_list.columns=["species"]
