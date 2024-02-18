@@ -5,13 +5,14 @@ import numpy as np
 import pandas as pd
 import sys
 import os
-import pickle 
+# import pickle 
+import json
 
 path_sp_root = sys.argv[1]
 path_abu_root = sys.argv[2]
 multi = int(sys.argv[3])
 path_sim = sys.argv[4]
-path_save = os.path.join(path_sim,"community/abu/abu_user.pkl")
+path_save = os.path.join(path_sim,"community/abu/abu_user.json")
 if multi==0:
     # A single file.
     abu_sample_sim_all = []
@@ -21,8 +22,8 @@ if multi==0:
     abu_sample_sim = abu_real["abu"].to_list()
     abu_sample_sim_all.append(list(abu_sample_sim))
     
-    with open(path_save,"wb") as f:
-        pickle.dump(abu_sample_sim_all,f)
+    with open(path_save,"w") as f:
+        json.dump(abu_sample_sim_all,f)
 else: # Multiple files.
     list_sp = sorted(os.listdir(path_sp_root))
     abu_sample_sim_all = []
@@ -33,6 +34,6 @@ else: # Multiple files.
         abu_real.columns=["abu"]
         abu_sample_sim = abu_real["abu"].to_list()
         abu_sample_sim_all.append(list(abu_sample_sim))
-    with open(path_save,"wb") as f:
-        pickle.dump(abu_sample_sim_all,f)
+    with open(path_save,"w") as f:
+        json.dump(abu_sample_sim_all,f)
 
