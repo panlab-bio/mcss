@@ -95,10 +95,16 @@ bash tools/strain_download.sh
    
        #  strain genomes and abu
        #  sim_com_f/strains.csv
+6. generate strains ( only strain genomes )
+```
+./mcss.sh strain -i sim_com_f -s 2
+   
+       #  strain genomes and abu
+       #  sim_com_f/strains.csv
 
 ```
 
-6. help doc
+7. help doc
 ```
 ./mcss.sh -h
 ./mcss.sh env -h
