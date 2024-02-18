@@ -105,7 +105,7 @@ case "$command" in
                         exit 1
                     fi
                     flag_genome=0
-                    shift 2
+                    shift 
                     ;;
                 --min_depth)
                     if [ "$flag_pbsim" = false ]; then
@@ -205,18 +205,18 @@ case "$command" in
             mkdir -p $output/species
         fi
         
-        path_abu_new=$current_dir/data/env/$env/abu.pkl
-        cp $path_abu_new $output/community/abu/abu_env.pkl
+        path_abu_new=$current_dir/data/env/$env/abu.json
+        cp $path_abu_new $output/community/abu/abu_env.json
         path_script=$current_dir/script
         python $path_script/sim_tree_env.py $output $current_dir $n_samples $env $flag_sl $path_tax $flag_acc
         if [ "$flag_pbsim" = true ]; then
             abu_name=$(ls $output/community/abu/)
             echo $abu_name
-            if [ "$abu_name" = "abu_env.pkl" ]; then
+            if [ "$abu_name" = "abu_env.json" ]; then
                 sim_mode=0
-            elif [ "$abu_name" = "abu_sample.pkl" ]; then
+            elif [ "$abu_name" = "abu_sample.json" ]; then
                 sim_mode=1
-            elif [ "$abu_name" = "abu_user.pkl" ]; then
+            elif [ "$abu_name" = "abu_user.json" ]; then
                 sim_mode=2
             fi
             echo "sim_mode "$sim_mode
@@ -414,7 +414,7 @@ case "$command" in
                         exit 1
                     fi
                     flag_genome=0
-                    shift 2
+                    shift 
                     ;;
                 --min_depth)
                     if [ "$flag_pbsim" = false ]; then
@@ -632,11 +632,11 @@ case "$command" in
         if [ "$flag_pbsim" = true ]; then
             abu_name=$(ls $output/community/abu/)
             echo $abu_name
-            if [ "$abu_name" = "abu_env.pkl" ]; then
+            if [ "$abu_name" = "abu_env.json" ]; then
                 sim_mode=0
-            elif [ "$abu_name" = "abu_sample.pkl" ]; then
+            elif [ "$abu_name" = "abu_sample.json" ]; then
                 sim_mode=1
-            elif [ "$abu_name" = "abu_user.pkl" ]; then
+            elif [ "$abu_name" = "abu_user.json" ]; then
                 sim_mode=2
             fi
             echo "sim_mode "$sim_mode
@@ -736,7 +736,7 @@ case "$command" in
                         exit 1
                     fi
                     flag_genome=0
-                    shift 2
+                    shift 
                     ;;
                 --min_depth)
                     if [ "$flag_pbsim" = false ]; then
@@ -843,9 +843,9 @@ case "$command" in
             if [[ " ${env_array[*]} " = *" $path_abu "* ]]; then
                 flag_abu=0
                 sim_mode=0
-                path_abu_new=$current_dir/data/env/$path_abu/abu.pkl
+                path_abu_new=$current_dir/data/env/$path_abu/abu.json
 
-                cp $path_abu_new $output/community/abu/abu_env.pkl
+                cp $path_abu_new $output/community/abu/abu_env.json
             else
                 flag_abu=1
                 sim_mode=2
@@ -879,11 +879,11 @@ case "$command" in
         if [ "$flag_pbsim" = true ]; then
             abu_name=$(ls $output/community/abu/)
             echo $abu_name
-            if [ "$abu_name" = "abu_env.pkl" ]; then
+            if [ "$abu_name" = "abu_env.json" ]; then
                 sim_mode=0
-            elif [ "$abu_name" = "abu_sample.pkl" ]; then
+            elif [ "$abu_name" = "abu_sample.json" ]; then
                 sim_mode=1
-            elif [ "$abu_name" = "abu_user.pkl" ]; then
+            elif [ "$abu_name" = "abu_user.json" ]; then
                 sim_mode=2
             fi
             echo "sim_mode "$sim_mode
@@ -939,7 +939,8 @@ case "$command" in
                         exit 1
                     fi
                     flag_genome=0
-                    shift 2
+                    echo "g"
+                    shift 
                     ;;
                 --min_depth)
                     if [ "$flag_depth" = true ]; then
@@ -1003,11 +1004,11 @@ case "$command" in
                 depth=$depth_pb
         fi
         abu_name=$(ls $input/community/abu/)
-        if [ "$abu_name" = "abu_env.pkl" ]; then
+        if [ "$abu_name" = "abu_env.json" ]; then
             sim_mode=0
-        elif [ "$abu_name" = "abu_sample.pkl" ]; then
+        elif [ "$abu_name" = "abu_sample.json" ]; then
             sim_mode=1
-        elif [ "$abu_name" = "abu_user.pkl" ]; then
+        elif [ "$abu_name" = "abu_user.json" ]; then
             sim_mode=2
         fi
         echo "sim_mode "$sim_mode
@@ -1022,14 +1023,21 @@ case "$command" in
         fi
 
         python $path_script/get_strain.py $current_dir $input $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome
+        # echo "python $path_script/get_strain.py $current_dir $input $cnt_strain $depth $type_depth $path_abu_new $sim_mode $method $model_new $pass_num $flag_genome"
         ;;
         
 ############################################################################################# strain   
     "strain")
+        
         flag_genome=1
         flag_pbsim=true
         cnt_strain=1
+        depth=$cnt_strain
+        type_depth=0
+        flag_depth=false
         flag_in=false
+        data_ani=1
+        path_ani="Null"
         current_dir=$(dirname $(realpath $0))
         path_script=$current_dir/script
         while [[ $# -gt 0 ]]; do
@@ -1043,7 +1051,32 @@ case "$command" in
                     ;;
                 -s|--strain)
                     cnt_strain="$2"
-                    
+                    depth=$cnt_strain
+                    shift 2
+                    ;;
+                -a|--ani)
+                    data_ani=0
+                    path_ani=$2
+                    shift 2
+                    ;;
+                --min_depth)
+                    if [ "$flag_depth" = true ]; then
+                        echo "these two options (--min_depth, --mean_depth) are in conflict"
+                        exit 1
+                    fi
+                    flag_depth=true
+                    type_depth=0
+                    depth_pb="$2"
+                    shift 2
+                    ;;
+                --mean_depth)
+                    if [ "$flag_depth" = true ]; then
+                        echo "these two options (--min_depth, --mean_depth) are in conflict"
+                        exit 1
+                    fi
+                    flag_depth=true
+                    type_depth=1
+                    depth_pb="$2"
                     shift 2
                     ;;
                 g|genome)
@@ -1052,11 +1085,12 @@ case "$command" in
                         exit 1
                     fi
                     flag_genome=0
-                    shift 2
+                    shift 
                     ;;
                 -h|--help)
                     echo "-i,--input: input dir " 
                     echo "-s,--strain：number of strain,default 1"
+                    echo "--min_depth, --mean_depth：min or average depth of species"
                     exit 0
                     ;;
                 *)
@@ -1070,21 +1104,25 @@ case "$command" in
             echo "error : no input"
             exit 1
         fi
-
+        if [ "$flag_depth" = true ]; then
+                depth=$depth_pb
+        fi
         abu_name=$(ls $input/community/abu/)
-        if [ "$abu_name" = "abu_env.pkl" ]; then
+        if [ "$abu_name" = "abu_env.json" ]; then
             sim_mode=0
-        elif [ "$abu_name" = "abu_sample.pkl" ]; then
+        elif [ "$abu_name" = "abu_sample.json" ]; then
             sim_mode=1
-        elif [ "$abu_name" = "abu_user.pkl" ]; then
+        elif [ "$abu_name" = "abu_user.json" ]; then
             sim_mode=2
         fi
         echo "sim_mode "$sim_mode
         path_abu_new=$input/community/abu/$abu_name
         model_new=$current_dir/data/pbsim_model/$model
+        path_save_ani=$input/strains
+        mkdir $path_save_ani
 
 
-        python $path_script/sim_strains.py $current_dir $input $cnt_strain   $path_abu_new $sim_mode $flag_genome
+        python $path_script/sim_strains.py $current_dir $input $cnt_strain   $path_abu_new $sim_mode $flag_genome $depth $type_depth $data_ani $path_ani
         ;;
     "-h")
         echo "mcss.sh env: Environment-specific simulated data generation "
