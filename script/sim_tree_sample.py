@@ -7,7 +7,7 @@ import subprocess
 import sys
 import os
 import random
-import pickle 
+# import pickle 
 import copy
 from lib.dis_generate import *
 from scipy.stats import lognorm
@@ -35,9 +35,9 @@ else:
     flag_env = True
     
 path_tree =  os.path.join(path_abs,"data/n_ary_tree")
-path_tree_dict =  os.path.join(path_tree,"dis_all_dict_alltree.pkl")
-with open(path_tree_dict,"rb") as f:
-    dict_tree = pickle.load(f)
+path_tree_dict =  os.path.join(path_tree,"dis_all_dict_alltree.json")
+with open(path_tree_dict,"r") as f:
+    dict_tree = json.load(f)
     
 data_tree_30 =[]
 dis_tree_30 =[]
@@ -111,35 +111,35 @@ for name in list_name:
     shift_tree_30.append(shift_tree30)
     name_tree_30.append(datad_name30)
 if flag_env:
-    abu_name = "abu_env.pkl"
+    abu_name = "abu_env.json"
 else:
-    abu_name = "abu_sample.pkl"
+    abu_name = "abu_sample.json"
     
     
 path_abu_save = os.path.join(path_sim,"abu",abu_name)
 
-with open(path_abu_save,"wb") as f:
-    pickle.dump(list_abu_all,f)
+with open(path_abu_save,"w") as f:
+    json.dump(list_abu_all,f)
 
 
 
 
-path_tree_name =  os.path.join(path_tree,"data_tree_name.pkl")
-path_tree_data =  os.path.join(path_tree,"data_sp_alltree.pkl")
-path_tree_dis =  os.path.join(path_tree,"dis_tree.pkl")
-path_tree_shift =  os.path.join(path_tree,"shift_tree.pkl")
+path_tree_name =  os.path.join(path_tree,"data_tree_name.json")
+path_tree_data =  os.path.join(path_tree,"data_sp_alltree.json")
+path_tree_dis =  os.path.join(path_tree,"dis_tree.json")
+path_tree_shift =  os.path.join(path_tree,"shift_tree.json")
 
 
-with open(path_tree_data,"rb") as f:
-    data_alltree = pickle.load(f)  
+with open(path_tree_data,"r") as f:
+    data_alltree = json.load(f)  
     
-with open(path_tree_name,"rb") as f:
-    datad_name = pickle.load(f)
+with open(path_tree_name,"r") as f:
+    datad_name = json.load(f)
     
-with open(path_tree_dis,"rb") as f:
-    dis_tree = pickle.load(f)
-with open(path_tree_shift,"rb") as f:
-    shift_tree = pickle.load(f)
+with open(path_tree_dis,"r") as f:
+    dis_tree = json.load(f)
+with open(path_tree_shift,"r") as f:
+    shift_tree = json.load(f)
 
 data_tree_root,dis_tree_root,dis_shift_tree_root = get_root_node(data_alltree,dis_tree,shift_tree)  
 datad_name_root = [["root"]]+datad_name
@@ -230,13 +230,13 @@ if path_sim.endswith("/"):
     path_sim_root = path_sim.replace("community/","")
 else:
     path_sim_root = path_sim.replace("community","")
-path_save = os.path.join(path_sim_root,"species","sp_list.pkl")
+path_save = os.path.join(path_sim_root,"species","sp_list.json")
 
-with open(path_save,"wb") as f:
-    pickle.dump(name_sp_list,f)
+with open(path_save,"w") as f:
+    json.dump(name_sp_list,f)
     
 for nsl_i,nsl in enumerate(name_sp_list):
-    path_save_df = path_save.replace(".pkl","_"+str(nsl_i)+".csv") 
+    path_save_df = path_save.replace(".json","_"+str(nsl_i)+".csv") 
 
     df_name_sp_list = pd.DataFrame(nsl)
     df_name_sp_list.columns=["species"]
