@@ -5,13 +5,14 @@ import pandas as pd
 import subprocess
 import os
 import random
-import pickle 
+# import pickle 
 import random
 import gzip
 from Bio import SeqIO
 from Bio.Seq import Seq
 import sys
 from scipy.stats import lognorm
+import json
 
 
 path_abs = sys.argv[1]
@@ -85,13 +86,16 @@ else:
     df_path_sp.columns=["sp","path"]
 
 
-path_sp_sim = os.path.join(path_sim,"species/sp_list.pkl")
+# path_sp_sim = os.path.join(path_sim,"species/sp_list.pkl")
+path_sp_sim = os.path.join(path_sim,"species/sp_list.json")
 path_reads = os.path.join(path_sim,"pbsim")
 sim_out = path_reads
 print(sim_out)
 
-with open(path_sp_sim,"rb") as f:
-    name_sp_list = pickle.load(f)
+# with open(path_sp_sim,"rb") as f:
+#     name_sp_list = pickle.load(f)
+with open(path_sp_sim,"r") as f:
+    name_sp_list = json.load(f)
 # List for storing genomes
 
 
@@ -102,8 +106,10 @@ else:
     
 
 
-with open(path_abu,"rb") as f:
-    abu_real = pickle.load(f)
+# with open(path_abu,"rb") as f:
+#     abu_real = pickle.load(f)
+with open(path_abu,"r") as f:
+    abu_real = json.load(f)
 
 for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个样本
     sp_a_sample = name_sp_sample[:]
@@ -217,5 +223,3 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
         sim_read_pbsim3(list_strain_choice,depth_list_strain,method,model,sim_out,path_abs,pass_sum,n_index+1,flag_ccs)
     
     
-
-
