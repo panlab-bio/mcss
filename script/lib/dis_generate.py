@@ -5,9 +5,9 @@ import subprocess
 import os
 import random
 from scipy import stats
-import pickle 
+# import pickle 
 import copy
-
+import json
 # get dis list of microbial community
 def get_distance_dict_node_alltree_2(n,merge_name,my_columns,dis_n):
     # Return the distances between layers; the input is a specific layer.
@@ -743,17 +743,18 @@ def get_sp_cnt_data_level(path_meanshift,data_tree_train,dis_tree_train,
     level = ["d","p","c","o","f","g"]
     list_generate = []
     l="d"
-    path_x = os.path.join(path_meanshift,"x_"+l+".pkl")
-    path_label = os.path.join(path_meanshift,"label_"+l+".pkl")
-
-    with open(path_x,"rb") as f:
-        x = pickle.load(f)
-    with open(path_label,"rb") as f:
-        label = pickle.load(f)
+    path_x = os.path.join(path_meanshift,"x_"+l+".json")
+    path_label = os.path.join(path_meanshift,"label_"+l+".json")
+    x = np.loadtxt(path_x)
+    label = np.loadtxt(path_label)
+    # with open(path_x,"r") as f:
+    #     x = json.load(f)
+    # with open(path_label,"r") as f:
+    #     label = json.load(f)
 
         
-    d1 = random.choice(x[label==0])
-    d2 = random.choice(x[label==1])
+    d1 = int(random.choice((x[label==0])))
+    d2 = int(random.choice((x[label==1])))
     
 
     domain=[d1,d2]
