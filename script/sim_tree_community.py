@@ -3,7 +3,8 @@
 import pandas as pd
 import sys
 import os
-import pickle
+# import pickle
+import json
 path_sp = sys.argv[1]
 path_sim = sys.argv[2]
 path_multi = int(sys.argv[3])
@@ -26,12 +27,12 @@ else: # Multiple inputs.
         name_sp_list.append(list(df_sp["Species"].to_list()))
 
 
-path_save = os.path.join(path_sim,"species","sp_list.pkl")
+path_save = os.path.join(path_sim,"species","sp_list.json")
 
-with open(path_save,"wb") as f:
-    pickle.dump(name_sp_list,f)
+with open(path_save,"w") as f:
+    json.dump(name_sp_list,f)
 for nsl_i,nsl in enumerate(name_sp_list):
-    path_save_df = path_save.replace(".pkl","_"+str(nsl_i)+".csv") 
+    path_save_df = path_save.replace(".json","_"+str(nsl_i)+".csv") 
 
     df_name_sp_list = pd.DataFrame(nsl)
     df_name_sp_list.columns=["species"]
