@@ -14,8 +14,8 @@ def save_meanshift(data_all,path_meanshift = path_meanshift):
     # The number of clusters obtained by mean shift is denoted as mk
     flag =True # Check if it's definitive; use k-means for boundaries.
     for index_l,i in enumerate(data_all):
-        path_x = os.path.join(path_meanshift,"x_"+level[index_l]+".pkl")
-        path_label = os.path.join(path_meanshift,"label_"+level[index_l]+".pkl")
+        path_x = os.path.join(path_meanshift,"x_"+level[index_l]+".json")
+        path_label = os.path.join(path_meanshift,"label_"+level[index_l]+".json")
         if flag:
             x = np.array(i).reshape(-1,1)
             Z = np.array(i)
@@ -32,8 +32,10 @@ def save_meanshift(data_all,path_meanshift = path_meanshift):
             clustering = MeanShift(bandwidth=bandwidth, bin_seeding=True,n_jobs=32).fit(x)
             my_label = clustering.labels_
         print(path_x,path_label)
-        with open(path_x,"wb") as f:
-            pickle.dump(x,f)
-        with open(path_label,"wb") as f:
-            pickle.dump(my_label,f)
+        np.savetxt(path_x, x)
+        np.savetxt(path_label, my_label)
+        # with open(path_x,"w") as f:
+        #     json.dump(x,f)
+        # with open(path_label,"w") as f:
+        #     json.dump(my_label,f)
 save_meanshift(data_all)
