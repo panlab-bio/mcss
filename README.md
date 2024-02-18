@@ -97,12 +97,12 @@ bash tools/strain_download.sh
        #  sim_com_f/strains.csv
 ```
 
-6. generate strains ( only strain genomes )
+6. artificial SNPs
 ```
-./mcss.sh strain -i sim_com_f -s 2
+./mcss.sh strain -i sim_com_f -s 2 -a data/ani/gut_ani.json
    
-       #  strain genomes and abu
-       #  sim_com_f/strains.csv
+       #  generate new strains based on ANI
+       
 
 ```
 
