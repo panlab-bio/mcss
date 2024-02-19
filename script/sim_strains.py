@@ -226,6 +226,7 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
             
             baes_name = str(lsc.split("/")[-1][:13])
             path_save_ani = os.path.join(path_sim,"strains")
+            list_strain_choice_add.append(lsc)
             for licnt_i in range(lscnt):
                 ldn = random.sample(loaded_ani,1)[0]
                 # print(ldn)
@@ -241,7 +242,8 @@ for n_index,name_sp_sample in enumerate(name_sp_list):# name_sp_sample是一个�
                 print(ldn,name_j,lan,path_save_ani)
                
                 my_seq,my_len = get_strain_genome(seq_id_init,record,record_seq_list[:],ldn,name_j,lan,path_save_ani)
-        list_strain_choice_new = list_strain_choice_add + list_strain_choice
+        # list_strain_choice_new = list_strain_choice_add + list_strain_choice
+        list_strain_choice_new = list_strain_choice_add[:]
     else:
         list_strain_choice_new = list_strain_choice[:]
         
