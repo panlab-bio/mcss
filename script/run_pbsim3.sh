@@ -51,4 +51,7 @@ else
     cat ${prefix}_0001.fastq >> $path_out/$sim_concat/sim.fastq
 fi
 
+awk '{ if (NR % 4 == 2) { gsub(/[^ATCG]/, substr("ATCG", int(rand()*4) + 1, 1)); } } 1' sim.fastq > sim_old.fastq
+awk 'BEGIN {i=1} (NR%4 == 1) {print "@sim." i" "i"/"1; i++} NR%4 != 1 {print $0}' sim_old.fastq > sim.fastq
+rm sim_old.fastq
 
