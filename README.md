@@ -117,7 +117,7 @@ bash tools/strain_download.sh
 ```
 
 ### citation
-if you use MCSS, please cite:
+if you use MCSS, please cite:  https://doi.org/10.3389/fmicb.2024.1358257
 
 
 
